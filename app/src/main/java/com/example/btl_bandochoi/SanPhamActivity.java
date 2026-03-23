@@ -5,11 +5,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.widget.ImageView;
 import com.example.btl_bandochoi.adapter.ProductAdapter;
 import com.example.btl_bandochoi.data.FakeData;
 
-public class SanPham extends AppCompatActivity {
+public class SanPhamActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ProductAdapter adapter;
@@ -26,5 +26,8 @@ public class SanPham extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        ImageView back = findViewById(R.id.back);
+        back.setOnClickListener(v -> finish());
     }
 }

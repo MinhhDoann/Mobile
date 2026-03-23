@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         btnsp = findViewById(R.id.btnsp);
 
         btnsp.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SanPham.class);
+            Intent intent = new Intent(MainActivity.this, SanPhamActivity.class);
             startActivity(intent);
         });
     }
