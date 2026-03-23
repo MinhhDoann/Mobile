@@ -1,12 +1,30 @@
 package com.example.btl_bandochoi;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class sanpham extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.btl_bandochoi.adapter.ProductAdapter;
+import com.example.btl_bandochoi.data.FakeData;
+
+public class SanPham extends AppCompatActivity {
+
+    RecyclerView recyclerView;
+    ProductAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.sanpham);
+
+        recyclerView = findViewById(R.id.recyclerView);
+
+        adapter = new ProductAdapter(FakeData.getProducts());
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 }
