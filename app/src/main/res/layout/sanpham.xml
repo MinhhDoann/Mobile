@@ -20,6 +20,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="Sản Phẩm Của Tôi"
             android:textSize="20sp"
             android:gravity="center"/>
@@ -41,6 +42,9 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="40dp"
+            android:textStyle="bold"
+            android:textSize="6pt"
+            android:background="@drawable/sanpham"
             android:gravity="center"
             android:text="Còn hàng"/>
 
@@ -48,9 +52,11 @@
             android:id="@+id/hethang"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:textStyle="bold"
+            android:background="@drawable/sanpham"
+            android:textSize="6pt"
             android:layout_height="40dp"
             android:gravity="center"
-
             android:text="Hết hàng"/>
 
     </LinearLayout>
