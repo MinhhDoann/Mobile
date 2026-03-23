@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="#E9D7D7"
     tools:context=".MainActivity">
 
@@ -41,7 +42,7 @@
                 android:layout_marginStart="10dp"/>
 
             <Button
-                android:id="@+id/btnBuy"
+                android:id="@+id/btnlogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đăng nhập"/>
@@ -77,16 +78,19 @@
                 android:layout_marginBottom="8dp"/>
 
             <TextView
+                android:id="@+id/txtshd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Số hóa đơn: 0"/>
 
             <TextView
+                android:id="@+id/txtspb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sản phẩm bán: 0"/>
 
             <TextView
+                android:id="@+id/txtdt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Doanh thu: 0đ"/>
@@ -101,6 +105,7 @@
             android:background="@drawable/banner">
 
             <LinearLayout
+                android:id="@+id/btnsp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -123,6 +128,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btnhd"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -145,6 +151,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btnkh"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -167,6 +174,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/kho"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -189,6 +197,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btntk"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -211,6 +220,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btnht"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -258,42 +268,49 @@
                 android:layout_width="wrap_content"
                 android:text="🧸 Gấu bông - còn 1"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_margin="10dp"
-            android:padding="15dp"
             android:background="@drawable/banner"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="15dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HĐ 2Boi Toy Shop"
-                    android:textStyle="bold"
-                    android:textSize="15sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Địa chỉ: Hà Nội"/>
+                    android:text="HĐ 2Boi Toy Shop |"
+                    android:layout_marginRight="5dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ: Hà Nội" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hotline: 0989 999 999"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Version 1.0 - 2026"
-                android:textColor="#777"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="Hotline: 0989 999 999 |" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Version 1.0 - 2026"
+                    android:textColor="#777" />
             </LinearLayout>
         </LinearLayout>
 
