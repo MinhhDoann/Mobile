@@ -63,8 +63,9 @@ public class SanPhamActivity extends AppCompatActivity {
         EditText edtQuantity = dialog.findViewById(R.id.edtQuantity);
         Spinner spinnerImage = dialog.findViewById(R.id.spinnerImage);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        ImageView btnClose = dialog.findViewById(R.id.btnClose);
 
-        String[] imageNames = {"car", "doll", "robot", "lego"};
+        String[] imageNames = {"car", "doll", "robot", "lego", "go"};
         ArrayAdapter<String> imageAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, imageNames);
         imageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -79,6 +80,10 @@ public class SanPhamActivity extends AppCompatActivity {
             if (position >= 0) {
                 spinnerImage.setSelection(position);
             }
+        }
+
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
         }
 
         btnSave.setOnClickListener(v -> {
@@ -115,5 +120,6 @@ public class SanPhamActivity extends AppCompatActivity {
         });
 
         dialog.show();
+
     }
 }
