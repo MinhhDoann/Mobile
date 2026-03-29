@@ -1,21 +1,28 @@
 package com.example.btl_bandochoi.model;
 
 public class Product {
-    public int id;
-    public String name;
-    public String image;
-    public double price;
-    public int stock;
-    public int sold;
-    public String status;
+    private int id;
+    private String name;
+    private double price;
+    private int quantity;
+    private String image;
 
-    public Product(int id, String name, String image, double price, int stock, int sold, String status) {
+    public Product(int id, String name, double price, int quantity, String image) {
         this.id = id;
         this.name = name;
-        this.image = image;
         this.price = price;
-        this.stock = stock;
-        this.sold = sold;
-        this.status = status;
+        this.quantity = quantity;
+        this.image = image;
     }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    public int getQuantity() { return quantity; }
+    public String getImage() { return image; }
+
+    public void setName(String name) { this.name = name; }
+    public void setPrice(double price) { this.price = price; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setImage(String image) { this.image = image; }
 }
