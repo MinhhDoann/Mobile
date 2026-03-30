@@ -6,6 +6,7 @@ public class Product {
     private double price;
     private int quantity;
     private String image;
+    private int categoryId;
 
     public Product(int id, String name, double price, int quantity, String image) {
         this.id = id;
@@ -25,4 +26,6 @@ public class Product {
     public void setPrice(double price) { this.price = price; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setImage(String image) { this.image = image; }
+    public int getCategoryId() { return categoryId; }
+    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
 }

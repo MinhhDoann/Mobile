@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btl_bandochoi.adapter.ProductAdapter;
+import com.example.btl_bandochoi.data.CategoryDAO;
 import com.example.btl_bandochoi.data.ProductDAO;
+import com.example.btl_bandochoi.model.Category;
 import com.example.btl_bandochoi.model.Product;
 
 import java.util.List;
@@ -52,11 +54,15 @@ public class SanPhamActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        ImageView back = findViewById(R.id.back);
+        back.setOnClickListener(v -> finish());
     }
 
     private void showDialog(Product product) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_product);
+        Spinner spCategory = dialog.findViewById(R.id.spCategory);
 
         EditText edtName = dialog.findViewById(R.id.edtName);
         EditText edtPrice = dialog.findViewById(R.id.edtPrice);
@@ -70,6 +76,25 @@ public class SanPhamActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, imageNames);
         imageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerImage.setAdapter(imageAdapter);
+        CategoryDAO categoryDAO = new CategoryDAO(this);
+        List<Category> list = categoryDAO.getAll();
+
+        ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                list
+        );
+
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCategory.setAdapter(categoryAdapter);
+        if (product != null) {
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getId() == product.getCategoryId()) {
+                    spCategory.setSelection(i);
+                    break;
+                }
+            }
+        }
 
         if (product != null) {
             edtName.setText(product.getName());
@@ -91,6 +116,8 @@ public class SanPhamActivity extends AppCompatActivity {
             String priceStr = edtPrice.getText().toString().trim();
             String qtyStr = edtQuantity.getText().toString().trim();
             String selectedImage = spinnerImage.getSelectedItem().toString();
+            Category selectedCategory = (Category) spCategory.getSelectedItem();
+            int categoryId = selectedCategory.getId();
 
             if (name.isEmpty() || priceStr.isEmpty() || qtyStr.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
@@ -108,10 +135,10 @@ public class SanPhamActivity extends AppCompatActivity {
             }
 
             if (product == null) {
-                dao.insertProduct(name, price, quantity, selectedImage);
+                dao.insertProduct(name, price, quantity, selectedImage,categoryId);
                 Toast.makeText(this, "Thêm sản phẩm thành công", Toast.LENGTH_SHORT).show();
             } else {
-                dao.updateProduct(product.getId(), name, price, quantity, selectedImage);
+                dao.updateProduct(product.getId(), name, price, quantity, selectedImage, categoryId);
                 Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
             }
 

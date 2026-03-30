@@ -20,7 +20,7 @@ public class ProductDAO {
     }
 
 
-    public long insertProduct(String name, double price, int quantity, String image) {
+    public long insertProduct(String name, double price, int quantity, String image, int categoryId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -28,13 +28,14 @@ public class ProductDAO {
         values.put("price", price);
         values.put("quantity", quantity);
         values.put("image", image);
+        values.put("category_id", categoryId);
 
         long id = db.insert("Product", null, values);
         db.close();
         return id;
     }
 
-    public int updateProduct(int id, String name, double price, int quantity, String image) {
+    public int updateProduct(int id, String name, double price, int quantity, String image, int categoryId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -42,6 +43,7 @@ public class ProductDAO {
         values.put("price", price);
         values.put("quantity", quantity);
         values.put("image", image);
+        values.put("category_id", categoryId);
 
         int rowsAffected = db.update("Product", values, "id=?",
                 new String[]{String.valueOf(id)});
