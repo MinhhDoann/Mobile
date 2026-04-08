@@ -174,7 +174,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/kho"
+                android:id="@+id/btnCategory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -188,7 +188,7 @@
                     android:src="@drawable/avatar"/>
 
                 <TextView
-                    android:text="Kho"
+                    android:text="Danh mục"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
