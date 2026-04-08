@@ -30,4 +30,20 @@ public class CategoryDAO {
         c.close();
         return list;
     }
+
+    public void insert(String name) {
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        db.insert("Category", null, values);
+    }
+
+    public void update(int id, String name) {
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        db.update("Category", values, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public void delete(int id) {
+        db.delete("Category", "id=?", new String[]{String.valueOf(id)});
+    }
 }
