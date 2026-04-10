@@ -13,6 +13,7 @@ import com.example.btl_bandochoi.data.ProductDAO;
 import com.example.btl_bandochoi.model.Category;
 import com.example.btl_bandochoi.model.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SanPhamActivity extends AppCompatActivity {
@@ -21,30 +22,46 @@ public class SanPhamActivity extends AppCompatActivity {
     ProductAdapter adapter;
     ProductDAO dao;
 
+    TextView conHang, hetHang;
+
+    private boolean isShowInStock = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sanpham);
-        recyclerView = findViewById(R.id.recyclerView);
 
-        if (recyclerView == null) {
-            Toast.makeText(this, "Không tìm thấy RecyclerView trong layout!", Toast.LENGTH_LONG).show();
-            return;
-        }
+        recyclerView = findViewById(R.id.recyclerView);
+        conHang = findViewById(R.id.conhang);
+        hetHang = findViewById(R.id.hethang);
 
         dao = new ProductDAO(this);
+
         initSampleData();
+
+        highlightButton(conHang, hetHang);
         loadData();
+
+        conHang.setOnClickListener(v -> {
+            isShowInStock = true;
+            highlightButton(conHang, hetHang);
+            loadData();
+        });
+
+        hetHang.setOnClickListener(v -> {
+            isShowInStock = false;
+            highlightButton(hetHang, conHang);
+            loadData();
+        });
+
         findViewById(R.id.btnAdd).setOnClickListener(v -> showDialog(null));
 
         ImageView back = findViewById(R.id.back);
-        if (back != null) {
-            back.setOnClickListener(v -> finish());
-        }
+        back.setOnClickListener(v -> finish());
 
-        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
     private void initSampleData() {
         CategoryDAO cdao = new CategoryDAO(this);
 
@@ -61,15 +78,25 @@ public class SanPhamActivity extends AppCompatActivity {
                 dao.insertProduct("Xe ô tô", "Xe đẹp", 30000, 10,
                         3, 10, "active", "car", list.get(0).getId());
 
-                dao.insertProduct("Robot", "Robot thông minh", 50000, 5,
-                        5, 15, "active", "robot", list.get(1).getId());
+                dao.insertProduct("Robot", "Robot thông minh", 50000, 0,
+                        5, 15, "active", "robot", list.get(1).getId()); // 🔥 test hết hàng
             }
         }
     }
+
     private void loadData() {
         List<Product> list = dao.getAllProducts();
+        List<Product> filteredList = new ArrayList<>();
 
-        adapter = new ProductAdapter(this, list, new ProductAdapter.OnItemClick() {
+        for (Product p : list) {
+            if (isShowInStock) {
+                if (p.getQuantity() > 0) filteredList.add(p);
+            } else {
+                if (p.getQuantity() == 0) filteredList.add(p);
+            }
+        }
+
+        adapter = new ProductAdapter(this, filteredList, new ProductAdapter.OnItemClick() {
             @Override
             public void onEdit(Product p) {
                 showDialog(p);
@@ -83,8 +110,15 @@ public class SanPhamActivity extends AppCompatActivity {
             }
         });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    private void highlightButton(TextView selected, TextView other) {
+        selected.setBackgroundResource(R.drawable.btn_selected);
+        selected.setTextColor(getResources().getColor(android.R.color.white));
+
+        other.setBackgroundResource(R.drawable.sanpham);
+        other.setTextColor(getResources().getColor(android.R.color.black));
     }
 
     private void showDialog(Product product) {
@@ -105,27 +139,18 @@ public class SanPhamActivity extends AppCompatActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
         ImageView btnClose = dialog.findViewById(R.id.btnClose);
 
-
         String[] imageNames = {"car", "doll", "robot", "lego", "go"};
-        ArrayAdapter<String> imageAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, imageNames);
-        spinnerImage.setAdapter(imageAdapter);
+        spinnerImage.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, imageNames));
 
         CategoryDAO categoryDAO = new CategoryDAO(this);
         List<Category> list = categoryDAO.getAll();
-
-        ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                list
-        );
-        spCategory.setAdapter(categoryAdapter);
-
+        spCategory.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, list));
 
         String[] statusList = {"active", "inactive"};
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, statusList);
-        spStatus.setAdapter(statusAdapter);
+        spStatus.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, statusList));
 
         if (product != null) {
             edtName.setText(product.getName());
@@ -134,64 +159,38 @@ public class SanPhamActivity extends AppCompatActivity {
             edtDescription.setText(product.getDescription());
             edtAgeFrom.setText(String.valueOf(product.getAgeFrom()));
             edtAgeTo.setText(String.valueOf(product.getAgeTo()));
-
-            spinnerImage.setSelection(imageAdapter.getPosition(product.getImage()));
-            spStatus.setSelection(product.getStatus().equals("active") ? 0 : 1);
-
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getId() == product.getCategoryId()) {
-                    spCategory.setSelection(i);
-                    break;
-                }
-            }
         }
 
         btnClose.setOnClickListener(v -> dialog.dismiss());
 
-
         btnSave.setOnClickListener(v -> {
-            String name = edtName.getText().toString().trim();
-            String priceStr = edtPrice.getText().toString().trim();
-            String qtyStr = edtQuantity.getText().toString().trim();
-            String description = edtDescription.getText().toString().trim();
-            String ageFromStr = edtAgeFrom.getText().toString().trim();
-            String ageToStr = edtAgeTo.getText().toString().trim();
-
-            String image = spinnerImage.getSelectedItem().toString();
-            String status = spStatus.getSelectedItem().toString();
-
-            Category selectedCategory = (Category) spCategory.getSelectedItem();
-            if (selectedCategory == null) {
-                Toast.makeText(this, "Chưa có danh mục", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (name.isEmpty() || priceStr.isEmpty() || qtyStr.isEmpty()) {
-                Toast.makeText(this, "Nhập đủ thông tin", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             try {
-                double price = Double.parseDouble(priceStr);
-                int quantity = Integer.parseInt(qtyStr);
-                int ageFrom = ageFromStr.isEmpty() ? 0 : Integer.parseInt(ageFromStr);
-                int ageTo = ageToStr.isEmpty() ? 0 : Integer.parseInt(ageToStr);
+                String name = edtName.getText().toString();
+                double price = Double.parseDouble(edtPrice.getText().toString());
+                int quantity = Integer.parseInt(edtQuantity.getText().toString());
+
+                String description = edtDescription.getText().toString();
+                int ageFrom = edtAgeFrom.getText().toString().isEmpty() ? 0 : Integer.parseInt(edtAgeFrom.getText().toString());
+                int ageTo = edtAgeTo.getText().toString().isEmpty() ? 0 : Integer.parseInt(edtAgeTo.getText().toString());
+
+                String image = spinnerImage.getSelectedItem().toString();
+                String status = spStatus.getSelectedItem().toString();
+
+                Category category = (Category) spCategory.getSelectedItem();
 
                 if (product == null) {
                     dao.insertProduct(name, description, price, quantity,
-                            ageFrom, ageTo, status, image, selectedCategory.getId());
-                    Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
+                            ageFrom, ageTo, status, image, category.getId());
                 } else {
                     dao.updateProduct(product.getId(), name, description, price, quantity,
-                            ageFrom, ageTo, status, image, selectedCategory.getId());
-                    Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+                            ageFrom, ageTo, status, image, category.getId());
                 }
 
                 dialog.dismiss();
                 loadData();
 
             } catch (Exception e) {
-                Toast.makeText(this, "Dữ liệu không hợp lệ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Lỗi nhập dữ liệu", Toast.LENGTH_SHORT).show();
             }
         });
 
