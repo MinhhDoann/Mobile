@@ -20,8 +20,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         DatabaseHelper dbHelper = new DatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        dbHelper = new DatabaseHelper(this);
         dbHelper.getWritableDatabase();
 
         setContentView(R.layout.activity_main);
