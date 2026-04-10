@@ -20,7 +20,32 @@ public class ProductDAO {
         dbHelper = new DatabaseHelper(context);
     }
 
+    public List<Product> getLowStockProducts(int limit) {
+        List<Product> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM Product WHERE quantity > 0 AND quantity <= 10 LIMIT ?",
+                new String[]{String.valueOf(limit)}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                Product p = new Product();
+
+                p.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                p.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                p.setQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("quantity")));
+
+                list.add(p);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return list;
+    }
     public long insertProduct(String name, String description,
                               double price, int quantity,
                               int ageFrom, int ageTo,
