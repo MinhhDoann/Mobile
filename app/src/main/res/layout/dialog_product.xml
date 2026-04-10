@@ -36,6 +36,14 @@
         android:layout_height="wrap_content"
         android:hint="Tên sản phẩm"
         android:layout_marginBottom="12dp"/>
+    <EditText
+        android:id="@+id/edtDescription"
+        android:hint="Mô tả sản phẩm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:minLines="2"
+        android:maxLines="4"/>
 
     <EditText
         android:id="@+id/edtPrice"
@@ -52,6 +60,42 @@
         android:hint="Số lượng"
         android:inputType="number"
         android:layout_marginBottom="16dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <EditText
+            android:id="@+id/edtAgeFrom"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Tuổi từ"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/edtAgeTo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Tuổi đến"
+            android:inputType="number"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+    <TextView
+        android:text="Trạng thái"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"/>
+
+    <Spinner
+        android:id="@+id/spStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"/>
 
     <TextView
         android:layout_width="match_parent"

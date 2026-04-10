@@ -34,16 +34,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvPrice, tvQuantity;
+        TextView txtDescription, txtAge, txtStatus;
         ImageView imgProduct;
         TextView btnEdit, btnDelete;
+        View layoutExtra;
 
         public ViewHolder(View itemView) {
             super(itemView);
+
             tvName = itemView.findViewById(R.id.txtName);
             tvPrice = itemView.findViewById(R.id.txtPrice);
             tvQuantity = itemView.findViewById(R.id.txtQuantity);
-            imgProduct = itemView.findViewById(R.id.imgProduct);
 
+            txtDescription = itemView.findViewById(R.id.txtDescription);
+            txtAge = itemView.findViewById(R.id.txtAge);
+            txtStatus = itemView.findViewById(R.id.txtStatus);
+
+            layoutExtra = itemView.findViewById(R.id.layoutExtra);
+
+            imgProduct = itemView.findViewById(R.id.imgProduct);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
@@ -52,49 +61,55 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_product, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_product, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = list.get(position);
 
-        holder.tvName.setText(product.getName());
-        holder.tvPrice.setText(String.format("%,.0f đ", product.getPrice()));
-        holder.tvQuantity.setText("SL: " + product.getQuantity());
+        Product p = list.get(position);
 
-        // ==================== HIỂN THỊ ẢNH ====================
-        String imageName = product.getImage();
-        if (imageName != null && !imageName.isEmpty()) {
-            int imageResId = context.getResources().getIdentifier(
-                    imageName,
-                    "drawable",
-                    context.getPackageName()
+        holder.tvName.setText(p.getName());
+        holder.tvPrice.setText(String.format("%,.0f đ", p.getPrice()));
+        holder.tvQuantity.setText("SL: " + p.getQuantity());
+
+        holder.txtDescription.setText("Mô tả: " + p.getDescription());
+        holder.txtAge.setText("Độ tuổi: " + p.getAgeFrom() + " - " + p.getAgeTo());
+        holder.txtStatus.setText("Trạng thái: " + p.getStatus());
+
+        try {
+            int resId = context.getResources().getIdentifier(
+                    p.getImage(), "drawable", context.getPackageName()
             );
 
-            if (imageResId != 0) {
-                holder.imgProduct.setImageResource(imageResId);
+            if (resId != 0) {
+                holder.imgProduct.setImageResource(resId);
             } else {
                 holder.imgProduct.setImageResource(R.drawable.car);
             }
-        } else {
+        } catch (Exception e) {
             holder.imgProduct.setImageResource(R.drawable.car);
         }
 
-        // Xử lý click Edit & Delete
+        holder.layoutExtra.setVisibility(p.isExpanded() ? View.VISIBLE : View.GONE);
+
+        holder.itemView.setOnClickListener(v -> {
+            p.setExpanded(!p.isExpanded());
+            notifyItemChanged(position);
+        });
+
         holder.btnEdit.setOnClickListener(v -> {
-            if (listener != null) listener.onEdit(product);
+            if (listener != null) listener.onEdit(p);
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDelete(product);
+            if (listener != null) listener.onDelete(p);
         });
     }
 
     @Override
     public int getItemCount() {
-        return list != null ? list.size() : 0;
+        return list == null ? 0 : list.size();
     }
 }
