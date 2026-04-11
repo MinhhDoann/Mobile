@@ -43,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         loadLowStock();
     }
 
+    // 🔥 QUAN TRỌNG: tự động reload khi quay lại
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadLowStock();
+    }
+
     private void loadLowStock() {
         ProductDAO dao = new ProductDAO(this);
         List<Product> list = dao.getLowStockProducts(3);
