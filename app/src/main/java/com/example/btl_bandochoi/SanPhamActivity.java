@@ -79,7 +79,7 @@ public class SanPhamActivity extends AppCompatActivity {
                         3, 10, "active", "car", list.get(0).getId());
 
                 dao.insertProduct("Robot", "Robot thông minh", 50000, 0,
-                        5, 15, "active", "robot", list.get(1).getId()); // 🔥 test hết hàng
+                        5, 15, "active", "robot", list.get(1).getId());
             }
         }
     }

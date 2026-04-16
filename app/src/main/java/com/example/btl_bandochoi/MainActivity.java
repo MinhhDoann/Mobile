@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         loadLowStock();
     }
 
-    // 🔥 QUAN TRỌNG: tự động reload khi quay lại
     @Override
     protected void onResume() {
         super.onResume();
