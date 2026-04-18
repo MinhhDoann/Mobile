@@ -1,26 +1,38 @@
-package com.example.yourapp;
+package com.example.btl_bandochoi;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.btl_bandochoi.adapter.OrderAdapter;
+import com.example.btl_bandochoi.data.InvoiceDAO;
+import com.example.btl_bandochoi.model.Invoice;
+
+import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
     private RecyclerView recyclerOrders;
     private OrderAdapter orderAdapter;
     private ImageView btnBack, btnSearch;
+    private InvoiceDAO invoiceDAO;
+    private List<Invoice> invoiceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        invoiceDAO = new InvoiceDAO(this);
+
         anhXa();
         setupRecyclerView();
         setEvent();
+        loadOrders();
     }
 
     private void anhXa() {
@@ -31,18 +43,29 @@ public class OrderActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         recyclerOrders.setLayoutManager(new LinearLayoutManager(this));
-        // orderAdapter = new OrderAdapter(this, orderList);
-        // recyclerOrders.setAdapter(orderAdapter);
+    }
+
+    private void loadOrders() {
+        invoiceList = invoiceDAO.getAllInvoices();
+        orderAdapter = new OrderAdapter(this, invoiceList, invoice -> {
+            Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
+            intent.putExtra("invoice_id", invoice.getId());
+            startActivity(intent);
+        });
+        recyclerOrders.setAdapter(orderAdapter);
     }
 
     private void setEvent() {
         btnBack.setOnClickListener(v -> finish());
 
-        // Click vào một đơn hàng → xem chi tiết
-        // orderAdapter.setOnItemClickListener(order -> {
-        //     Intent intent = new Intent(this, OrderDetailActivity.class);
-        //     intent.putExtra("order_id", order.getId());
-        //     startActivity(intent);
-        // });
+        findViewById(R.id.btnAddOrder).setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng tạo đơn hàng mới sẽ được triển khai sau", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadOrders();
     }
 }
