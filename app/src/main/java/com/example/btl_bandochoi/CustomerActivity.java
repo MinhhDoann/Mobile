@@ -24,11 +24,12 @@ public class CustomerActivity extends AppCompatActivity {
     RecyclerView recyclerCustomers;
     EditText etSearch;
     ImageView btnSearch, btnBack;
-    TextView btnAddCustomer;
+    TextView btnAdd;
 
     CustomerDAO dao;
     List<Customer> list;
     CustomerAdapter adapter;
+    List<Customer> originalList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +40,17 @@ public class CustomerActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
         btnBack = findViewById(R.id.btnBack);
-        btnAddCustomer = findViewById(R.id.btnAddCustomer);
+        btnAdd = findViewById(R.id.btnAdd);
 
         dao = new CustomerDAO(this);
 
         recyclerCustomers.setLayoutManager(new LinearLayoutManager(this));
 
         loadData();
+
+        btnAdd.setOnClickListener(v -> {
+            adapter.showAddDialog();
+        });
 
         btnBack.setOnClickListener(v -> finish());
 
@@ -70,21 +75,11 @@ public class CustomerActivity extends AppCompatActivity {
 
             @Override public void afterTextChanged(Editable s) {}
         });
-
-        btnAddCustomer.setOnClickListener(v -> {
-            Customer c = new Customer();
-            c.setName("Khách mới");
-            c.setPhone("09xxxxxxx");
-            c.setAddress("Hà Nội");
-            c.setStatus("active");
-
-            dao.insert(c);
-            loadData();
-        });
     }
 
     private void loadData() {
         list = dao.getAll();
+        originalList = new ArrayList<>(list);
 
         adapter = new CustomerAdapter(this, list);
         recyclerCustomers.setAdapter(adapter);
@@ -93,7 +88,7 @@ public class CustomerActivity extends AppCompatActivity {
     private void filter(String text) {
         List<Customer> filtered = new ArrayList<>();
 
-        for (Customer c : list) {
+        for (Customer c : originalList) {
             if (c.getName().toLowerCase().contains(text.toLowerCase())
                     || c.getPhone().contains(text)) {
                 filtered.add(c);
