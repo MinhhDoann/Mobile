@@ -3,11 +3,10 @@ package com.example.btl_bandochoi.adapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.view.*;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,14 +18,14 @@ import java.util.List;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHolder> {
 
-    Context context;
-    List<Customer> list;
-    CustomerDAO dao;
+    private final Context context;
+    private List<Customer> list;
+    private final CustomerDAO dao;
 
     public CustomerAdapter(Context context, List<Customer> list) {
         this.context = context;
         this.list = list;
-        dao = new CustomerDAO(context);
+        this.dao = new CustomerDAO(context);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -39,7 +38,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             txtPhone = v.findViewById(R.id.txtPhone);
             txtAddress = v.findViewById(R.id.txtAddress);
             txtTotalSpent = v.findViewById(R.id.txtTotalSpent);
-
             btnEdit = v.findViewById(R.id.btnEdit);
             btnDelete = v.findViewById(R.id.btnDelete);
         }
@@ -47,8 +45,9 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.customer_item, parent, false));
+        View view = LayoutInflater.from(context)
+                .inflate(R.layout.customer_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -60,20 +59,16 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         h.txtAddress.setText(c.getAddress());
         h.txtTotalSpent.setText(String.format("%,.0fđ", c.getTotalSpent()));
 
-        h.btnEdit.setOnClickListener(v -> showDialog(c, h.getAdapterPosition()));
+        h.btnEdit.setOnClickListener(v -> showDialog(c));
 
         h.btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
-                    .setTitle("Xóa khách?")
-                    .setMessage("Bạn có chắc muốn xóa?")
-                    .setPositiveButton("Xóa", (d, w) -> {
-                        int pos = h.getAdapterPosition();
-                        if (pos != RecyclerView.NO_POSITION) {
-                            dao.delete(list.get(pos).getId());
-                            list.remove(pos);
-                            notifyItemRemoved(pos);
-                            Toast.makeText(context, "Đã xóa", Toast.LENGTH_SHORT).show();
-                        }
+                    .setTitle("Xóa khách hàng?")
+                    .setMessage("Bạn có chắc muốn xóa khách hàng này không?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        dao.delete(c.getId());
+                        reloadData();
+                        Toast.makeText(context, "Đã xóa khách hàng", Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("Hủy", null)
                     .show();
@@ -85,69 +80,127 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         return list.size();
     }
 
+    private void reloadData() {
+        list.clear();
+        list.addAll(dao.getAll());
+        notifyDataSetChanged();
+    }
+
     public void updateList(List<Customer> newList) {
         this.list = newList;
         notifyDataSetChanged();
     }
 
-    private void showDialog(Customer c, int position) {
+    private void showDialog(Customer c) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_customer);
 
         EditText edtName = dialog.findViewById(R.id.edtName);
         EditText edtPhone = dialog.findViewById(R.id.edtPhone);
+        EditText edtEmail = dialog.findViewById(R.id.edtEmail);
         EditText edtAddress = dialog.findViewById(R.id.edtAddress);
+        Spinner spStatus = dialog.findViewById(R.id.spStatus);
+        TextView txtCreatedDate = dialog.findViewById(R.id.txtCreatedDate);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+
+        String[] statusList = {"active", "inactive"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                context, android.R.layout.simple_spinner_dropdown_item, statusList);
+        spStatus.setAdapter(adapter);
 
         if (c != null) {
             edtName.setText(c.getName());
             edtPhone.setText(c.getPhone());
-            edtAddress.setText(c.getAddress());
+            edtEmail.setText(c.getEmail() != null ? c.getEmail() : "");
+            edtAddress.setText(c.getAddress() != null ? c.getAddress() : "");
+
+            if (c.getCreatedDate() != null) {
+                txtCreatedDate.setText("Ngày tạo: " + c.getCreatedDate());
+                txtCreatedDate.setVisibility(View.VISIBLE);
+            }
+
+            spStatus.setSelection("inactive".equals(c.getStatus()) ? 1 : 0);
+        } else {
+            txtCreatedDate.setVisibility(View.GONE);
+            spStatus.setSelection(0);
         }
 
         btnSave.setOnClickListener(v -> {
             String name = edtName.getText().toString().trim();
             String phone = edtPhone.getText().toString().trim();
+            String email = edtEmail.getText().toString().trim();
             String address = edtAddress.getText().toString().trim();
+            String status = spStatus.getSelectedItem().toString();
 
             if (name.isEmpty()) {
-                edtName.setError("Không được để trống");
+                edtName.setError("Tên khách hàng không được để trống");
                 return;
             }
+
+            if (phone.isEmpty()) {
+                edtPhone.setError("Số điện thoại bắt buộc");
+                return;
+            }
+
+            if (!phone.matches("^0\\d{9}$")) {
+                edtPhone.setError("SĐT phải bắt đầu bằng 0 và đủ 10 số");
+                return;
+            }
+
+            boolean success = false;
 
             if (c == null) {
                 Customer newC = new Customer();
                 newC.setName(name);
                 newC.setPhone(phone);
-                newC.setAddress(address);
-                newC.setStatus("active");
+                newC.setEmail(email.isEmpty() ? null : email);
+                newC.setAddress(address.isEmpty() ? null : address);
+                newC.setImage(null);
+                newC.setStatus(status);
 
                 long id = dao.insert(newC);
-                newC.setId((int) id);
 
-                list.add(newC);
-                notifyItemInserted(list.size() - 1);
-
-                Toast.makeText(context, "Đã thêm", Toast.LENGTH_SHORT).show();
-
-            } else {
+                if (id == -2) {
+                    Toast.makeText(context, "SĐT đã tồn tại!", Toast.LENGTH_SHORT).show();
+                } else if (id == -1) {
+                    Toast.makeText(context, "Lỗi khi thêm khách hàng! (Xem Logcat)", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Đã thêm thành công! ID=" + id, Toast.LENGTH_SHORT).show();
+                    success = true;
+                }
+            }  else {
                 c.setName(name);
                 c.setPhone(phone);
+                c.setEmail(email);
                 c.setAddress(address);
+                c.setStatus(status);
 
-                dao.update(c);
-                notifyItemChanged(position);
-
-                Toast.makeText(context, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+                int rowsAffected = dao.update(c);
+                if (rowsAffected > 0) {
+                    Toast.makeText(context, "Đã cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    success = true;
+                } else {
+                    Toast.makeText(context, "Không tìm thấy khách hàng để cập nhật", Toast.LENGTH_SHORT).show();
+                }
             }
 
-            dialog.dismiss();
+            if (success) {
+                reloadData();
+                dialog.dismiss();
+            }
         });
 
         dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        }
     }
 
     public void showAddDialog() {
-        showDialog(null, -1);
+        showDialog(null);
     }
 }
