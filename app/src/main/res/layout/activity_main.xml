@@ -151,7 +151,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnkh"
+                android:id="@+id/btnCustomer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"

@@ -17,6 +17,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     LinearLayout btnsp, btnCategory, layoutLowStock;
+    LinearLayout btnCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         btnsp = findViewById(R.id.btnsp);
         btnCategory = findViewById(R.id.btnCategory);
         layoutLowStock = findViewById(R.id.layoutLowStock);
+        btnCustomer = findViewById(R.id.btnCustomer);
 
         btnsp.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, SanPhamActivity.class));
@@ -41,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, CategoryActivity.class));
         });
 
+        btnCustomer.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, CustomerActivity.class));
+        });
         loadLowStock();
     }
 

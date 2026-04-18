@@ -2,102 +2,69 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F8F1F1">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
         android:gravity="center_vertical"
-        android:padding="12dp"
-        android:elevation="4dp">
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@android:drawable/ic_media_previous"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Khách hàng"
-            android:textColor="#333333"
-            android:textSize="20sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:text="Khách hàng"
+            android:textSize="20sp"
+            android:gravity="center"/>
 
         <ImageView
             android:id="@+id/btnSearch"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@android:drawable/ic_menu_search" />
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@android:drawable/ic_menu_search"/>
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tìm theo tên hoặc số điện thoại..."
-            android:drawableStart="@android:drawable/ic_menu_search" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnAddCustomer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#EE4D2D"
-        android:text=" + Thêm khách hàng mới"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:layout_height="40dp"
+        android:hint="Tìm khách hàng..."
+        android:padding="10dp"
+        android:visibility="gone"
+        android:background="@android:drawable/edit_text"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCustomers"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:paddingBottom="20dp"/>
 
-    <!-- Empty state -->
     <LinearLayout
-        android:id="@+id/layoutEmpty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/avatar" />
+        android:layout_height="50dp"
+        android:background="@drawable/btn"
+        android:gravity="center">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/btnAddCustomer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chưa có khách hàng nào"
-            android:textSize="18sp"
+            android:gravity="center"
+            android:text="Thêm khách hàng mới"
             android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nhấn nút + để thêm khách hàng đầu tiên"
-            android:textColor="#888888"
-            android:layout_marginTop="8dp" />
+            android:textSize="7pt"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>
