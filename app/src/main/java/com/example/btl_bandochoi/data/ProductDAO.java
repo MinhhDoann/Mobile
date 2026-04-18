@@ -25,7 +25,9 @@ public class ProductDAO {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "SELECT * FROM Product WHERE quantity > 0 AND quantity <= 10 LIMIT ?",
+                "SELECT * FROM Product " +
+                        "WHERE quantity > 0 AND quantity <= 10 " +
+                        "ORDER BY quantity ASC LIMIT ?",
                 new String[]{String.valueOf(limit)}
         );
 
@@ -46,6 +48,7 @@ public class ProductDAO {
         db.close();
         return list;
     }
+
     public long insertProduct(String name, String description,
                               double price, int quantity,
                               int ageFrom, int ageTo,
@@ -65,9 +68,11 @@ public class ProductDAO {
         values.put("category_id", categoryId);
 
         long id = db.insert("Product", null, values);
+
         if (id == -1) {
             Log.e("DB", "Insert failed");
         }
+
         db.close();
         return id;
     }

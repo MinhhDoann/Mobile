@@ -1,6 +1,7 @@
 package com.example.btl_bandochoi;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     LinearLayout btnsp, btnCategory, layoutLowStock;
+    LinearLayout btnCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         btnsp = findViewById(R.id.btnsp);
         btnCategory = findViewById(R.id.btnCategory);
         layoutLowStock = findViewById(R.id.layoutLowStock);
+        btnCustomer = findViewById(R.id.btnCustomer);
 
         btnsp.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, SanPhamActivity.class));
@@ -40,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, CategoryActivity.class));
         });
 
+        btnCustomer.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, CustomerActivity.class));
+        });
+        loadLowStock();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadLowStock();
     }
 
