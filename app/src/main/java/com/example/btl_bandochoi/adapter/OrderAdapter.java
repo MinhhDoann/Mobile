@@ -46,7 +46,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.order_item, parent, false);   // Bạn cần tạo file này
+                .inflate(R.layout.activity_invoicedetail, parent, false);   // Bạn cần tạo file này
         return new ViewHolder(view);
     }
 

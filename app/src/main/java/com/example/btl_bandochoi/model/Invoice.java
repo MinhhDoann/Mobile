@@ -5,31 +5,46 @@ public class Invoice {
     private String invoiceCode;
     private String date;
     private double total;
+    private String status;
+    private String paymentMethod;
+    private String notes;
     private int customerId;
-    private String customerName;   // dùng để hiển thị
 
+    // Thêm để hiển thị tên khách hàng (join từ bảng Customer)
+    private String customerName;
+    private String customerAddress;
+
+    // Constructor rỗng
     public Invoice() {}
 
-    public Invoice(int id, String invoiceCode, String date, double total, int customerId, String customerName) {
-        this.id = id;
-        this.invoiceCode = invoiceCode;
-        this.date = date;
-        this.total = total;
-        this.customerId = customerId;
-        this.customerName = customerName;
-    }
-
+    // Getter & Setter
     public int getId() { return id; }
-    public String getInvoiceCode() { return invoiceCode; }
-    public String getDate() { return date; }
-    public double getTotal() { return total; }
-    public int getCustomerId() { return customerId; }
-    public String getCustomerName() { return customerName; }
-
     public void setId(int id) { this.id = id; }
+
+    public String getInvoiceCode() { return invoiceCode; }
     public void setInvoiceCode(String invoiceCode) { this.invoiceCode = invoiceCode; }
+
+    public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
+
+    public double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public int getCustomerId() { return customerId; }
     public void setCustomerId(int customerId) { this.customerId = customerId; }
+
+    public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerAddress() { return customerAddress; }
+    public void setCustomerAddress(String customerAddress) { this.customerAddress = customerAddress; }
 }

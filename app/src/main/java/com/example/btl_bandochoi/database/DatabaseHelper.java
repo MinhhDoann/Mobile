@@ -19,28 +19,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE Category (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT NOT NULL)");
+                "name TEXT NOT NULL," +
+                "description TEXT," +
+                "image TEXT" +
+                ")");
 
         db.execSQL("CREATE TABLE Product (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
+                "description TEXT," +
                 "price REAL NOT NULL DEFAULT 0," +
                 "quantity INTEGER NOT NULL DEFAULT 0," +
+                "age_from INTEGER," +
+                "age_to INTEGER," +
+                "status TEXT DEFAULT 'active'," +
                 "image TEXT," +
                 "category_id INTEGER," +
-                "FOREIGN KEY(category_id) REFERENCES Category(id) ON DELETE SET NULL)");
+                "FOREIGN KEY(category_id) REFERENCES Category(id) ON DELETE SET NULL" +
+                ")");
 
         db.execSQL("CREATE TABLE Customer (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
-                "phone TEXT)");
+                "phone TEXT UNIQUE," +
+                "email TEXT," +
+                "address TEXT," +
+                "created_date TEXT DEFAULT (datetime('now','localtime'))," +
+                "total_spent REAL DEFAULT 0," +
+                "status TEXT DEFAULT 'active'" +
+                ")");
 
         db.execSQL("CREATE TABLE Invoice (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "date TEXT NOT NULL," +
+                "invoice_code TEXT," +
+                "date TEXT DEFAULT (datetime('now','localtime'))," +
                 "total REAL DEFAULT 0," +
+                "status TEXT DEFAULT 'Pending'," +
+                "payment_method TEXT," +
+                "notes TEXT," +
                 "customer_id INTEGER," +
-                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE SET NULL)");
+                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE SET NULL" +
+                ")");
 
         db.execSQL("CREATE TABLE InvoiceDetail (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -48,16 +67,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "product_id INTEGER," +
                 "quantity INTEGER NOT NULL," +
                 "price REAL NOT NULL," +
+                "discount REAL DEFAULT 0," +
                 "FOREIGN KEY(invoice_id) REFERENCES Invoice(id) ON DELETE CASCADE," +
-                "FOREIGN KEY(product_id) REFERENCES Product(id))");
+                "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE SET NULL" +
+                ")");
 
         db.execSQL("CREATE TABLE StockHistory (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "product_id INTEGER," +
-                "type TEXT," +
+                "type TEXT CHECK(type IN ('import','export','adjust'))," +
                 "quantity INTEGER," +
-                "date TEXT," +
-                "FOREIGN KEY(product_id) REFERENCES Product(id))");
+                "date TEXT DEFAULT (datetime('now','localtime'))," +
+                "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE CASCADE" +
+                ")");
     }
 
     @Override

@@ -1,5 +1,4 @@
 package com.example.btl_bandochoi.adapter;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

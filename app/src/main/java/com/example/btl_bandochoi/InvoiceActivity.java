@@ -7,17 +7,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.btl_bandochoi.adapter.OrderAdapter;
 import com.example.btl_bandochoi.data.InvoiceDAO;
 import com.example.btl_bandochoi.model.Invoice;
 
 import java.util.List;
 
-public class OrderActivity extends AppCompatActivity {
+public class InvoiceActivity extends AppCompatActivity {
 
     private RecyclerView recyclerOrders;
-    private OrderAdapter orderAdapter;
     private ImageView btnBack, btnSearch;
     private InvoiceDAO invoiceDAO;
     private List<Invoice> invoiceList;
@@ -25,7 +22,7 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order);
+        setContentView(R.layout.activity_invoice);
 
         invoiceDAO = new InvoiceDAO(this);
 
@@ -48,7 +45,7 @@ public class OrderActivity extends AppCompatActivity {
     private void loadOrders() {
         invoiceList = invoiceDAO.getAllInvoices();
         orderAdapter = new OrderAdapter(this, invoiceList, invoice -> {
-            Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
+            Intent intent = new Intent(InvoiceActivity.this, OrderDetailActivity.class);
             intent.putExtra("invoice_id", invoice.getId());
             startActivity(intent);
         });

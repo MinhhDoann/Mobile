@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btl_bandochoi.data.InvoiceDAO;
 import com.example.btl_bandochoi.model.Invoice;
-import com.example.btl_bandochoi.model.InvoiceDetail;
 
 import java.util.List;
 

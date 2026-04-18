@@ -1,5 +1,4 @@
-package com.example.yourapp;
-
+package com.example.btl_bandochoi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +6,8 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.btl_bandochoi.adapter.CustomerAdapter;
 
 public class CustomerActivity extends AppCompatActivity {
 
