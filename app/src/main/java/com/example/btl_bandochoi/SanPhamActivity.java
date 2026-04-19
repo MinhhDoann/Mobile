@@ -1,6 +1,7 @@
 package com.example.btl_bandochoi;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -85,7 +86,17 @@ public class SanPhamActivity extends AppCompatActivity {
             loadData();
         });
 
-        findViewById(R.id.btnAdd).setOnClickListener(v -> showDialog(null));
+        findViewById(R.id.btnAdd).setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("USER", MODE_PRIVATE);
+            boolean isLoggedIn = prefs.getBoolean("isLogin", false);
+
+            if (!isLoggedIn) {
+                Toast.makeText(this, "Cần đăng nhập", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            showDialog(null);
+        });
 
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> finish());
