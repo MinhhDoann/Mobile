@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="8dp"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên sản phẩm"
+            android:textSize="15sp"
+            android:textColor="#333333" />
+
+        <TextView
+            android:id="@+id/txtQuantityPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 x 550,000 ₫"
+            android:textSize="13sp"
+            android:textColor="#666666" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtSubtotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="550,000 ₫"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginEnd="12dp" />
+
+    <ImageView
+        android:id="@+id/btnDeleteDetail"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="Xóa sản phẩm" />
+</LinearLayout>

@@ -20,7 +20,6 @@ public class InvoiceDetailDAO {
         List<InvoiceDetail> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Sử dụng JOIN để lấy tên sản phẩm từ bảng Product
         String query = "SELECT d.id, d.invoice_id, d.product_id, d.quantity, d.price, d.discount, p.name " +
                        "FROM InvoiceDetail d " +
                        "JOIN Product p ON d.product_id = p.id " +
@@ -37,7 +36,7 @@ public class InvoiceDetailDAO {
                 detail.setQuantity(cursor.getInt(3));
                 detail.setPrice(cursor.getDouble(4));
                 detail.setDiscount(cursor.getDouble(5));
-                detail.setProductName(cursor.getString(6)); // Lấy tên sản phẩm
+                detail.setProductName(cursor.getString(6));
                 list.add(detail);
             } while (cursor.moveToNext());
         }
@@ -54,5 +53,37 @@ public class InvoiceDetailDAO {
         values.put("price", detail.getPrice());
         values.put("discount", detail.getDiscount());
         return db.insert("InvoiceDetail", null, values);
+    }
+
+    public int delete(int id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete("InvoiceDetail", "id = ?", new String[]{String.valueOf(id)});
+    }
+
+    public InvoiceDetail getDetailByInvoiceAndProduct(int invoiceId, int productId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("InvoiceDetail", null, "invoice_id = ? AND product_id = ?",
+                new String[]{String.valueOf(invoiceId), String.valueOf(productId)}, null, null, null);
+        
+        if (cursor != null && cursor.moveToFirst()) {
+            InvoiceDetail detail = new InvoiceDetail();
+            detail.setId(cursor.getInt(0));
+            detail.setInvoiceId(cursor.getInt(1));
+            detail.setProductId(cursor.getInt(2));
+            detail.setQuantity(cursor.getInt(3));
+            detail.setPrice(cursor.getDouble(4));
+            detail.setDiscount(cursor.getDouble(5));
+            cursor.close();
+            return detail;
+        }
+        if (cursor != null) cursor.close();
+        return null;
+    }
+
+    public int updateQuantity(int id, int newQuantity) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("quantity", newQuantity);
+        return db.update("InvoiceDetail", values, "id = ?", new String[]{String.valueOf(id)});
     }
 }

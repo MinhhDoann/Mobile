@@ -3,6 +3,7 @@ package com.example.btl_bandochoi.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,15 +16,21 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
 
     private List<InvoiceDetail> details;
     private DecimalFormat df = new DecimalFormat("#,### ₫");
+    private OnDeleteClickListener deleteClickListener;
 
-    public InvoiceDetailAdapter(List<InvoiceDetail> details) {
+    public interface OnDeleteClickListener {
+        void onDeleteClick(InvoiceDetail detail);
+    }
+
+    public InvoiceDetailAdapter(List<InvoiceDetail> details, OnDeleteClickListener deleteClickListener) {
         this.details = details;
+        this.deleteClickListener = deleteClickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_invoice_detail, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_detail, parent, false);
         return new ViewHolder(view);
     }
 
@@ -33,6 +40,12 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
         holder.txtProductName.setText(detail.getProductName());
         holder.txtQuantityPrice.setText(detail.getQuantity() + " x " + df.format(detail.getPrice()));
         holder.txtSubtotal.setText(df.format(detail.getSubTotal()));
+        
+        holder.btnDeleteDetail.setOnClickListener(v -> {
+            if (deleteClickListener != null) {
+                deleteClickListener.onDeleteClick(detail);
+            }
+        });
     }
 
     @Override
@@ -42,12 +55,14 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtProductName, txtQuantityPrice, txtSubtotal;
+        ImageView btnDeleteDetail;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtProductName = itemView.findViewById(R.id.txtProductName);
             txtQuantityPrice = itemView.findViewById(R.id.txtQuantityPrice);
             txtSubtotal = itemView.findViewById(R.id.txtSubtotal);
+            btnDeleteDetail = itemView.findViewById(R.id.btnDeleteDetail);
         }
     }
 }
