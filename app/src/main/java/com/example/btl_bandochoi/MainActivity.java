@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    LinearLayout btnsp, btnCategory, layoutLowStock;
+    LinearLayout btnsp, btnCategory, layoutLowStock, btnhd;
     LinearLayout btnCustomer;
 
     @Override
@@ -31,12 +31,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnsp = findViewById(R.id.btnsp);
+        btnhd = findViewById(R.id.btnhd);
         btnCategory = findViewById(R.id.btnCategory);
         layoutLowStock = findViewById(R.id.layoutLowStock);
         btnCustomer = findViewById(R.id.btnCustomer);
 
         btnsp.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, SanPhamActivity.class));
+        });
+
+        btnhd.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, InvoiceActivity.class));
         });
 
         btnCategory.setOnClickListener(v -> {

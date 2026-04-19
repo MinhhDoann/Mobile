@@ -33,7 +33,6 @@
                 android:text="Pending"
                 android:textColor="#FF9800"
                 android:textSize="13sp"
-                android:background="@drawable/status_bg"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"/>
         </LinearLayout>
