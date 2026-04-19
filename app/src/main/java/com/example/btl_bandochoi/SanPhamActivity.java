@@ -216,7 +216,6 @@ public class SanPhamActivity extends AppCompatActivity {
             edtAgeFrom.setText(String.valueOf(product.getAgeFrom()));
             edtAgeTo.setText(String.valueOf(product.getAgeTo()));
         }
-
         btnClose.setOnClickListener(v -> dialog.dismiss());
 
         btnSave.setOnClickListener(v -> {
