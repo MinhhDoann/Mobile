@@ -16,11 +16,14 @@ public class CategoryActivity extends AppCompatActivity {
     ListView listView;
     CategoryDAO dao;
     CategoryAdapter adapter;
+    EditText edtSearch;
+    ImageView btnSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
 
         listView = findViewById(R.id.listViewCategory);
         dao = new CategoryDAO(this);
@@ -28,6 +31,8 @@ public class CategoryActivity extends AppCompatActivity {
         loadData();
 
         findViewById(R.id.btnAddCategory).setOnClickListener(v -> showDialog(null));
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void loadData() {
@@ -56,6 +61,9 @@ public class CategoryActivity extends AppCompatActivity {
         EditText edtName = dialog.findViewById(R.id.edtName);
         Button btnSave = dialog.findViewById(R.id.btnSave);
 
+        ImageView btnClose = dialog.findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
         if (c != null) {
             edtName.setText(c.getName());
         }
@@ -79,5 +87,9 @@ public class CategoryActivity extends AppCompatActivity {
         });
 
         dialog.show();
+        dialog.getWindow().setLayout(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
     }
 }

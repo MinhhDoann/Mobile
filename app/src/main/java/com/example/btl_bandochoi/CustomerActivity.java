@@ -1,5 +1,6 @@
 package com.example.btl_bandochoi;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,12 +36,16 @@ public class CustomerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer);
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_customer);
 
         recyclerCustomers = findViewById(R.id.recyclerCustomers);
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
         btnBack = findViewById(R.id.btnBack);
         btnAdd = findViewById(R.id.btnAdd);
+        ImageView btnClose = dialog.findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
 
         dao = new CustomerDAO(this);
 

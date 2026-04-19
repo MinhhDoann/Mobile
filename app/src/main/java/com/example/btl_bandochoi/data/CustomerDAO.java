@@ -39,7 +39,7 @@ public class CustomerDAO {
             values.put("phone", c.getPhone().trim());
             values.put("email", c.getEmail() != null ? c.getEmail().trim() : null);
             values.put("address", c.getAddress() != null ? c.getAddress().trim() : null);
-            values.put("image", c.getImage());                    // null là OK
+            values.put("image", c.getImage());
             values.put("status", c.getStatus() != null ? c.getStatus() : "active");
 
             Log.d(TAG, "Attempting to insert: " + values.toString());
