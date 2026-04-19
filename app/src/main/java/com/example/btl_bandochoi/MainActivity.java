@@ -1,10 +1,13 @@
 package com.example.btl_bandochoi;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout btnsp, btnCategory, layoutLowStock;
     LinearLayout btnCustomer;
+    SharedPreferences prefs;
+    boolean isLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,25 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, CustomerActivity.class));
         });
         loadLowStock();
+        prefs = getSharedPreferences("USER", MODE_PRIVATE);
+        isLoggedIn = prefs.getBoolean("isLogin", false);
+
+        Button btnLogin = findViewById(R.id.btnlogin);
+
+        if (isLoggedIn) {
+            btnLogin.setText("Đăng xuất");
+        } else {
+            btnLogin.setText("Đăng nhập");
+        }
+        btnLogin.setOnClickListener(v -> {
+            if (!isLoggedIn) {
+                showLoginDialog();
+            } else {
+                prefs.edit().putBoolean("isLogin", false).apply();
+                Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                recreate();
+            }
+        });
     }
 
     @Override
