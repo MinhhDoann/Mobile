@@ -41,12 +41,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE Customer (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
-                "phone TEXT UNIQUE," +
+                "phone TEXT NOT NULL UNIQUE," +
                 "email TEXT," +
                 "address TEXT," +
+                "image TEXT," +
                 "created_date TEXT DEFAULT (datetime('now','localtime'))," +
                 "total_spent REAL DEFAULT 0," +
-                "status TEXT DEFAULT 'active'" +
+                "status TEXT DEFAULT 'active' CHECK(status IN ('active','inactive'))" +
                 ")");
 
         db.execSQL("CREATE TABLE Invoice (" +
@@ -85,6 +86,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Product");
+        db.execSQL("DROP TABLE IF EXISTS Customer");
         onCreate(db);
     }
+
 }

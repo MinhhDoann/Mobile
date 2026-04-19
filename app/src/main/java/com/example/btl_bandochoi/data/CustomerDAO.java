@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.btl_bandochoi.database.DatabaseHelper;
 import com.example.btl_bandochoi.model.Customer;
@@ -12,69 +13,107 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAO {
-
-    private DatabaseHelper dbHelper;
+    private static final String TAG = "CustomerDAO";
+    private SQLiteDatabase db;
 
     public CustomerDAO(Context context) {
-        dbHelper = new DatabaseHelper(context);
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        db = dbHelper.getWritableDatabase();
+        Log.i(TAG, "Database opened successfully");
     }
 
-    // Thêm khách hàng mới
-    public long insertCustomer(String name, String phone, String address) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public long insert(Customer c) {
+        if (c == null || c.getPhone() == null || c.getPhone().trim().isEmpty()) {
+            Log.e(TAG, "Insert failed: Phone is null or empty");
+            return -1;
+        }
+
+        if (isPhoneExists(c.getPhone())) {
+            Log.w(TAG, "Phone already exists: " + c.getPhone());
+            return -2;
+        }
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put("name", c.getName());
+            values.put("phone", c.getPhone().trim());
+            values.put("email", c.getEmail() != null ? c.getEmail().trim() : null);
+            values.put("address", c.getAddress() != null ? c.getAddress().trim() : null);
+            values.put("image", c.getImage());                    // null là OK
+            values.put("status", c.getStatus() != null ? c.getStatus() : "active");
+
+            Log.d(TAG, "Attempting to insert: " + values.toString());
+
+            long id = db.insertOrThrow("Customer", null, values);
+
+            Log.i(TAG, "=== INSERT THÀNH CÔNG === ID = " + id);
+            return id;
+
+        } catch (android.database.sqlite.SQLiteConstraintException e) {
+            Log.e(TAG, "Constraint violation (có thể phone trùng hoặc ràng buộc khác): " + e.getMessage(), e);
+            return -2;
+        } catch (Exception e) {
+            Log.e(TAG, "LỖI KHÔNG XÁC ĐỊNH khi insert: " + e.getMessage(), e);
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private boolean isPhoneExists(String phone) {
+        if (phone == null || phone.trim().isEmpty()) return false;
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT 1 FROM Customer WHERE phone = ?",
+                    new String[]{phone.trim()});
+            boolean exists = cursor.moveToFirst();
+            Log.d(TAG, "Check phone " + phone + " exists: " + exists);
+            return exists;
+        } catch (Exception e) {
+            Log.e(TAG, "Error in isPhoneExists: " + e.getMessage(), e);
+            return false;
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+    }
+
+    public int update(Customer c) {
         ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("phone", phone);
-        values.put("address", address);
-
-        long id = db.insert("Customer", null, values);
-        db.close();
-        return id;
+        values.put("name", c.getName());
+        values.put("phone", c.getPhone());
+        values.put("email", c.getEmail());
+        values.put("address", c.getAddress());
+        values.put("image", c.getImage());
+        values.put("status", c.getStatus());
+        return db.update("Customer", values, "id=?", new String[]{String.valueOf(c.getId())});
     }
 
-    // Lấy tất cả khách hàng
-    public List<Customer> getAllCustomers() {
+    public int delete(int id) {
+        return db.delete("Customer", "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public List<Customer> getAll() {
         List<Customer> list = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT id, name, phone, address, total_spent FROM Customer ORDER BY name", null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(0);
-                String name = cursor.getString(1);
-                String phone = cursor.getString(2);
-                String address = cursor.getString(3);
-                double totalSpent = cursor.getDouble(4);
-
-                list.add(new Customer(id, name, phone, address, totalSpent));
-            } while (cursor.moveToNext());
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM Customer", null);
+            while (cursor.moveToNext()) {
+                Customer c = new Customer();
+                c.setId(cursor.getInt(0));
+                c.setName(cursor.getString(1));
+                c.setPhone(cursor.getString(2));
+                c.setEmail(cursor.getString(3));
+                c.setAddress(cursor.getString(4));
+                c.setImage(cursor.getString(5));
+                c.setCreatedDate(cursor.getString(6));
+                c.setTotalSpent(cursor.getDouble(7));
+                c.setStatus(cursor.getString(8));
+                list.add(c);
+            }
+        } finally {
+            if (cursor != null) cursor.close();
         }
-
-        cursor.close();
-        db.close();
+        Log.i(TAG, "getAll() returned " + list.size() + " customers");
         return list;
-    }
-
-    // Lấy 1 khách hàng theo ID
-    public Customer getCustomerById(int id) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Customer WHERE id = ?",
-                new String[]{String.valueOf(id)});
-
-        if (cursor.moveToFirst()) {
-            Customer c = new Customer();
-            c.setId(cursor.getInt(0));
-            c.setName(cursor.getString(1));
-            c.setPhone(cursor.getString(2));
-            c.setAddress(cursor.getString(3));
-            c.setTotalSpent(cursor.getDouble(4));
-            cursor.close();
-            db.close();
-            return c;
-        }
-        cursor.close();
-        db.close();
-        return null;
     }
 }
