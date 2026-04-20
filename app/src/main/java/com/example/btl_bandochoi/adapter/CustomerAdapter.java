@@ -102,6 +102,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         Spinner spStatus = dialog.findViewById(R.id.spStatus);
         TextView txtCreatedDate = dialog.findViewById(R.id.txtCreatedDate);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        ImageView btnClose = dialog.findViewById(R.id.btnClose);
+
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
 
         String[] statusList = {"active", "inactive"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
