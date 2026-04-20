@@ -14,9 +14,9 @@ import java.util.List;
 
 public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdapter.ViewHolder> {
 
-    private List<InvoiceDetail> details;
-    private DecimalFormat df = new DecimalFormat("#,### ₫");
-    private OnDeleteClickListener deleteClickListener;
+    private final List<InvoiceDetail> details;
+    private final DecimalFormat df = new DecimalFormat("#,### ₫");
+    private final OnDeleteClickListener deleteClickListener;
 
     public interface OnDeleteClickListener {
         void onDeleteClick(InvoiceDetail detail);
@@ -30,7 +30,8 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_detail, parent, false);
+        // Đổi từ item_order_detail sang item_invoice_detail
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_invoice_detail, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +51,7 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
 
     @Override
     public int getItemCount() {
-        return details.size();
+        return details != null ? details.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

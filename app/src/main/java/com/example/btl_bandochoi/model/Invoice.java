@@ -10,14 +10,12 @@ public class Invoice {
     private String notes;
     private int customerId;
 
-    // Thêm để hiển thị tên khách hàng (join từ bảng Customer)
     private String customerName;
     private String customerAddress;
+    private int itemCount; // Số lượng mặt hàng trong hóa đơn
 
-    // Constructor rỗng
     public Invoice() {}
 
-    // Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -47,4 +45,7 @@ public class Invoice {
 
     public String getCustomerAddress() { return customerAddress; }
     public void setCustomerAddress(String customerAddress) { this.customerAddress = customerAddress; }
+
+    public int getItemCount() { return itemCount; }
+    public void setItemCount(int itemCount) { this.itemCount = itemCount; }
 }

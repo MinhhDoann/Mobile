@@ -48,8 +48,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHold
         holder.txtDate.setText(invoice.getDate() != null ? invoice.getDate() : "Chưa có ngày");
         holder.txtTotal.setText(String.format("%,.0f ₫", invoice.getTotal()));
 
-        // Số loại sản phẩm tạm thời (sẽ cải tiến sau khi có InvoiceDetail)
-        holder.txtItemCount.setText("3 sản phẩm");   // TODO: tính thực từ InvoiceDetail
+        // Hiển thị số lượng mặt hàng thực tế từ itemCount đã lấy trong InvoiceDAO
+        holder.txtItemCount.setText(invoice.getItemCount() + " sản phẩm");
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(invoice);

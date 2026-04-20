@@ -22,7 +22,6 @@ public class InvoiceDAO {
     public long insertInvoice(Invoice invoice) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put("invoice_code", invoice.getInvoiceCode());
         values.put("customer_id", invoice.getCustomerId());
         values.put("payment_method", invoice.getPaymentMethod());
@@ -39,8 +38,10 @@ public class InvoiceDAO {
         List<Invoice> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        // Cập nhật câu truy vấn để lấy thêm số lượng mặt hàng (COUNT)
         String query = "SELECT i.id, i.invoice_code, i.date, i.total, i.status, " +
-                "c.name as customer_name, c.address as customer_address " +
+                "c.name as customer_name, c.address as customer_address, " +
+                "(SELECT COUNT(*) FROM InvoiceDetail WHERE invoice_id = i.id) as item_count " +
                 "FROM Invoice i " +
                 "LEFT JOIN Customer c ON i.customer_id = c.id " +
                 "ORDER BY i.date DESC";
@@ -57,6 +58,8 @@ public class InvoiceDAO {
                 inv.setStatus(cursor.getString(4));
                 inv.setCustomerName(cursor.getString(5));
                 inv.setCustomerAddress(cursor.getString(6));
+                // Lưu số lượng mặt hàng vào trường tạm (cần cập nhật model Invoice)
+                inv.setItemCount(cursor.getInt(7)); 
 
                 list.add(inv);
             } while (cursor.moveToNext());
