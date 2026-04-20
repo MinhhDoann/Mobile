@@ -1,11 +1,14 @@
 package com.example.btl_bandochoi.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,19 +81,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.txtAge.setText("Độ tuổi: " + p.getAgeFrom() + " - " + p.getAgeTo());
         holder.txtStatus.setText("Trạng thái: " + p.getStatus());
 
-        try {
-            int resId = context.getResources().getIdentifier(
-                    p.getImage(), "drawable", context.getPackageName()
-            );
-
-            if (resId != 0) {
-                holder.imgProduct.setImageResource(resId);
-            } else {
-                holder.imgProduct.setImageResource(R.drawable.car);
-            }
-        } catch (Exception e) {
-            holder.imgProduct.setImageResource(R.drawable.car);
-        }
+        int resId = context.getResources().getIdentifier(
+                p.getImage(), "drawable", context.getPackageName()
+        );
+        holder.imgProduct.setImageResource(resId != 0 ? resId : R.drawable.car);
 
         holder.layoutExtra.setVisibility(p.isExpanded() ? View.VISIBLE : View.GONE);
 
@@ -99,12 +93,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             notifyItemChanged(position);
         });
 
+        SharedPreferences prefs = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("isLogin", false);
+
         holder.btnEdit.setOnClickListener(v -> {
+            if (!isLoggedIn) {
+                Toast.makeText(context, "Cần đăng nhập", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (listener != null) listener.onEdit(p);
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDelete(p);
+
+            if (!isLoggedIn) {
+                Toast.makeText(context, "Cần đăng nhập", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            new AlertDialog.Builder(context)
+                    .setTitle("Xóa sản phẩm")
+                    .setMessage("Bạn chắc chắn muốn xóa \"" + p.getName() + "\" không?")
+                    .setPositiveButton("Có", (dialog, which) -> {
+                        if (listener != null) listener.onDelete(p);
+                    })
+                    .setNegativeButton("Không", null)
+                    .show();
         });
     }
 

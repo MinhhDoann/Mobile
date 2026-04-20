@@ -3,25 +3,40 @@
     android:padding="12dp"
     android:orientation="horizontal"
     android:layout_width="match_parent"
+    android:background="@drawable/bogoc"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/txtName"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"/>
 
-    <Button
+    <TextView
         android:id="@+id/btnEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sửa"/>
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="36dp"
+        android:background="@drawable/btnsanpham"
+        android:gravity="center"
+        android:text="Sửa"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="#FF5722"
+        android:textStyle="bold"/>
 
-    <Button
+    <TextView
         android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Xóa"/>
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/btnsanpham"
+        android:gravity="center"
+        android:text="Xóa"
+        android:clickable="true"
+        android:focusable="true"
+        android:textStyle="bold"/>
 
 </LinearLayout>
