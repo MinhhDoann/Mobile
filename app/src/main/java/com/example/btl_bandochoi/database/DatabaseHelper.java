@@ -43,6 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE Customer (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
+                "gender TEXT CHECK(gender IN ('nữ','nam','other'))," +
                 "phone TEXT NOT NULL UNIQUE," +
                 "email TEXT," +
                 "address TEXT," +

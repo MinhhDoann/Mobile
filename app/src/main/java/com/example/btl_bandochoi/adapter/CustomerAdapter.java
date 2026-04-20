@@ -29,12 +29,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtName, txtPhone, txtAddress, txtTotalSpent;
+        TextView txtName, textGender, txtPhone, txtAddress, txtTotalSpent;
         TextView btnEdit, btnDelete;
 
         public ViewHolder(View v) {
             super(v);
             txtName = v.findViewById(R.id.txtName);
+            textGender = v.findViewById(R.id.txtGender);
             txtPhone = v.findViewById(R.id.txtPhone);
             txtAddress = v.findViewById(R.id.txtAddress);
             txtTotalSpent = v.findViewById(R.id.txtTotalSpent);
@@ -55,6 +56,19 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         Customer c = list.get(position);
 
         h.txtName.setText(c.getName());
+        String genderText;
+        switch (c.getGender() != null ? c.getGender() : "") {
+            case "nam":
+                genderText = "Nam";
+                break;
+            case "nữ":
+                genderText = "Nữ";
+                break;
+            default:
+                genderText = "Khác";
+        }
+        h.textGender.setText(genderText);
+
         h.txtPhone.setText(c.getPhone());
         h.txtAddress.setText(c.getAddress());
         h.txtTotalSpent.setText(String.format("%,.0fđ", c.getTotalSpent()));
@@ -96,6 +110,16 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         dialog.setContentView(R.layout.dialog_customer);
 
         EditText edtName = dialog.findViewById(R.id.edtName);
+        Spinner spGender = dialog.findViewById(R.id.spGender);
+
+        String[] genderList = {"nam", "nữ", "other"};
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
+                context,
+                android.R.layout.simple_spinner_dropdown_item,
+                genderList
+        );
+        spGender.setAdapter(genderAdapter);
+        spGender.setAdapter(genderAdapter);
         EditText edtPhone = dialog.findViewById(R.id.edtPhone);
         EditText edtEmail = dialog.findViewById(R.id.edtEmail);
         EditText edtAddress = dialog.findViewById(R.id.edtAddress);
@@ -118,6 +142,10 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             edtPhone.setText(c.getPhone());
             edtEmail.setText(c.getEmail() != null ? c.getEmail() : "");
             edtAddress.setText(c.getAddress() != null ? c.getAddress() : "");
+            int genderPos = 0;
+            if ("nữ".equals(c.getGender())) genderPos = 1;
+            else if ("other".equals(c.getGender())) genderPos = 2;
+            spGender.setSelection(genderPos);
 
             if (c.getCreatedDate() != null) {
                 txtCreatedDate.setText("Ngày tạo: " + c.getCreatedDate());
@@ -132,6 +160,12 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
 
         btnSave.setOnClickListener(v -> {
             String name = edtName.getText().toString().trim();
+            String gender = spGender.getSelectedItem().toString();
+
+            if (gender.isEmpty()) {
+                Toast.makeText(context, "Chọn giới tính!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String phone = edtPhone.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
             String address = edtAddress.getText().toString().trim();
@@ -157,6 +191,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             if (c == null) {
                 Customer newC = new Customer();
                 newC.setName(name);
+                newC.setGender(gender);
                 newC.setPhone(phone);
                 newC.setEmail(email.isEmpty() ? null : email);
                 newC.setAddress(address.isEmpty() ? null : address);
@@ -174,7 +209,16 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
                     success = true;
                 }
             }  else {
+                if (!phone.equals(c.getPhone())) {
+                    if (dao.insert(new Customer(){{
+                        setPhone(phone);
+                    }}) == -2) {
+                        Toast.makeText(context, "SĐT đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
                 c.setName(name);
+                c.setGender(gender);
                 c.setPhone(phone);
                 c.setEmail(email);
                 c.setAddress(address);

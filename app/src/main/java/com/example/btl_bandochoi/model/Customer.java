@@ -3,6 +3,7 @@ package com.example.btl_bandochoi.model;
 public class Customer {
     private int id;
     private String name;
+    private String gender;
     private String phone;
     private String image;
 
@@ -32,6 +33,9 @@ public class Customer {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.name = gender; }
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
     public String getPhone() { return phone; }

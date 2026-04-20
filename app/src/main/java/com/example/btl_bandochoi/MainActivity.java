@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock;
+    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock, btnhd;
     SharedPreferences prefs;
     boolean isLoggedIn;
 
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         btnsp = findViewById(R.id.btnsp);
         btnCategory = findViewById(R.id.btnCategory);
         btnCustomer = findViewById(R.id.btnCustomer);
+        btnhd = findViewById(R.id.btnhd);
         layoutLowStock = findViewById(R.id.layoutLowStock);
 
         Button btnLogin = findViewById(R.id.btnlogin);
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         btnCustomer.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomerActivity.class)));
+
+        btnhd.setOnClickListener(v ->
+                startActivity(new Intent(this, InvoiceActivity.class)));
 
         loadLowStock();
     }

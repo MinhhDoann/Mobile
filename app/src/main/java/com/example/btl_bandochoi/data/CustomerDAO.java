@@ -36,6 +36,7 @@ public class CustomerDAO {
         try {
             ContentValues values = new ContentValues();
             values.put("name", c.getName());
+            values.put("gender", c.getGender());
             values.put("phone", c.getPhone().trim());
             values.put("email", c.getEmail() != null ? c.getEmail().trim() : null);
             values.put("address", c.getAddress() != null ? c.getAddress().trim() : null);
@@ -80,6 +81,7 @@ public class CustomerDAO {
     public int update(Customer c) {
         ContentValues values = new ContentValues();
         values.put("name", c.getName());
+        values.put("gender", c.getGender());
         values.put("phone", c.getPhone());
         values.put("email", c.getEmail());
         values.put("address", c.getAddress());
@@ -101,13 +103,14 @@ public class CustomerDAO {
                 Customer c = new Customer();
                 c.setId(cursor.getInt(0));
                 c.setName(cursor.getString(1));
-                c.setPhone(cursor.getString(2));
-                c.setEmail(cursor.getString(3));
-                c.setAddress(cursor.getString(4));
-                c.setImage(cursor.getString(5));
-                c.setCreatedDate(cursor.getString(6));
-                c.setTotalSpent(cursor.getDouble(7));
-                c.setStatus(cursor.getString(8));
+                c.setGender(cursor.getString(2));
+                c.setPhone(cursor.getString(3));
+                c.setEmail(cursor.getString(4));
+                c.setAddress(cursor.getString(5));
+                c.setImage(cursor.getString(6));
+                c.setCreatedDate(cursor.getString(7));
+                c.setTotalSpent(cursor.getDouble(8));
+                c.setStatus(cursor.getString(9));
                 list.add(c);
             }
         } finally {
