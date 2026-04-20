@@ -1,100 +1,53 @@
-package com.example.btl_bandochoi;
+package com.example.yourapp;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.btl_bandochoi.adapter.CustomerAdapter;
-import com.example.btl_bandochoi.data.CustomerDAO;
-import com.example.btl_bandochoi.model.Customer;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class CustomerActivity extends AppCompatActivity {
 
-    RecyclerView recyclerCustomers;
-    EditText etSearch;
-    ImageView btnSearch, btnBack;
-    TextView btnAdd;
-
-    CustomerDAO dao;
-    List<Customer> list;
-    CustomerAdapter adapter;
-    List<Customer> originalList;
+    private RecyclerView recyclerCustomers;
+    private CustomerAdapter customerAdapter;
+    private ImageView btnBack, btnSearch;
+    // private List<Customer> customerList;   // sau này sẽ dùng Room hoặc SQLite
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer);
 
+        anhXa();
+        setupRecyclerView();
+        setEvent();
+    }
+
+    private void anhXa() {
         recyclerCustomers = findViewById(R.id.recyclerCustomers);
-        etSearch = findViewById(R.id.etSearch);
-        btnSearch = findViewById(R.id.btnSearch);
         btnBack = findViewById(R.id.btnBack);
-        btnAdd = findViewById(R.id.btnAdd);
+        btnSearch = findViewById(R.id.btnSearch);
+    }
 
-        dao = new CustomerDAO(this);
+    private void setupRecyclerView() {
         recyclerCustomers.setLayoutManager(new LinearLayoutManager(this));
+        // customerAdapter = new CustomerAdapter(this, customerList);
+        // recyclerCustomers.setAdapter(customerAdapter);
 
-        loadData();
+        // Hiện tạm empty state
+        findViewById(R.id.layoutEmpty).setVisibility(View.VISIBLE);
+    }
 
-        btnAdd.setOnClickListener(v -> {
-            if (adapter != null) {
-                adapter.showAddDialog();
-            }
-        });
-
+    private void setEvent() {
         btnBack.setOnClickListener(v -> finish());
 
-        btnSearch.setOnClickListener(v -> {
-            if (etSearch.getVisibility() == View.GONE) {
-                etSearch.setVisibility(View.VISIBLE);
-                etSearch.requestFocus();
-            } else {
-                etSearch.setVisibility(View.GONE);
-                etSearch.setText("");
-                loadData();
-            }
-        });
-
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filter(s.toString());
-            }
-
-            @Override public void afterTextChanged(Editable s) {}
-        });
-    }
-
-    private void loadData() {
-        list = dao.getAll();
-        originalList = new ArrayList<>(list);
-        adapter = new CustomerAdapter(this, list);
-        recyclerCustomers.setAdapter(adapter);
-    }
-
-    private void filter(String text) {
-        List<Customer> filtered = new ArrayList<>();
-        for (Customer c : originalList) {
-            if (c.getName().toLowerCase().contains(text.toLowerCase())
-                    || c.getPhone().contains(text)) {
-                filtered.add(c);
-            }
-        }
-        if (adapter != null) {
-            adapter.updateList(filtered);
-        }
+        // Click vào item khách hàng → xem chi tiết
+        // customerAdapter.setOnItemClickListener(customer -> {
+        //     Intent intent = new Intent(this, CustomerDetailActivity.class);
+        //     intent.putExtra("customer_id", customer.getId());
+        //     startActivity(intent);
+        // });
     }
 }

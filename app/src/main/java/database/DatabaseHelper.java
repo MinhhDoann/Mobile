@@ -1,5 +1,4 @@
-package com.example.btl_bandochoi.database;
-
+package database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -24,12 +23,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE Product (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
-                "description TEXT," +
                 "price REAL NOT NULL DEFAULT 0," +
                 "quantity INTEGER NOT NULL DEFAULT 0," +
-                "age_from INTEGER," +
-                "age_to INTEGER," +
-                "status TEXT DEFAULT 'active'," +
                 "image TEXT," +
                 "category_id INTEGER," +
                 "FOREIGN KEY(category_id) REFERENCES Category(id) ON DELETE SET NULL)");

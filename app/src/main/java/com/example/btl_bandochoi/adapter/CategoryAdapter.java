@@ -45,11 +45,8 @@ public class CategoryAdapter extends BaseAdapter {
         Category c = list.get(i);
 
         TextView txtName = view.findViewById(R.id.txtName);
-        TextView btnEdit = view.findViewById(R.id.btnEdit);
-        TextView btnDelete = view.findViewById(R.id.btnDelete);
-
-        btnEdit.setClickable(true);
-        btnDelete.setClickable(true);
+        Button btnEdit = view.findViewById(R.id.btnEdit);
+        Button btnDelete = view.findViewById(R.id.btnDelete);
 
         txtName.setText(c.getName());
 

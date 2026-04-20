@@ -1,11 +1,7 @@
 package com.example.btl_bandochoi;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,10 +23,6 @@ public class SanPhamActivity extends AppCompatActivity {
     ProductDAO dao;
 
     TextView conHang, hetHang;
-    EditText edtSearch;
-    ImageView btnSearch;
-
-    List<Product> fullList = new ArrayList<>();
 
     private boolean isShowInStock = true;
 
@@ -38,30 +30,6 @@ public class SanPhamActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sanpham);
-        edtSearch = findViewById(R.id.edtSearch);
-        btnSearch = findViewById(R.id.search);
-
-        btnSearch.setOnClickListener(v -> {
-            if (edtSearch.getVisibility() == View.GONE) {
-                edtSearch.setVisibility(View.VISIBLE);
-            } else {
-                edtSearch.setVisibility(View.GONE);
-                edtSearch.setText("");
-                loadData();
-            }
-        });
-        edtSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filter(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
 
         recyclerView = findViewById(R.id.recyclerView);
         conHang = findViewById(R.id.conhang);
@@ -86,47 +54,12 @@ public class SanPhamActivity extends AppCompatActivity {
             loadData();
         });
 
-        findViewById(R.id.btnAdd).setOnClickListener(v -> {
-            SharedPreferences prefs = getSharedPreferences("USER", MODE_PRIVATE);
-            boolean isLoggedIn = prefs.getBoolean("isLogin", false);
-
-            if (!isLoggedIn) {
-                Toast.makeText(this, "Cần đăng nhập", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            showDialog(null);
-        });
+        findViewById(R.id.btnAdd).setOnClickListener(v -> showDialog(null));
 
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> finish());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-    private void filter(String keyword) {
-        List<Product> filtered = new ArrayList<>();
-
-        for (Product p : fullList) {
-            if (p.getName().toLowerCase().contains(keyword.toLowerCase())) {
-                filtered.add(p);
-            }
-        }
-
-        adapter = new ProductAdapter(this, filtered, new ProductAdapter.OnItemClick() {
-            @Override
-            public void onEdit(Product p) {
-                showDialog(p);
-            }
-
-            @Override
-            public void onDelete(Product p) {
-                dao.deleteProduct(p.getId());
-                Toast.makeText(SanPhamActivity.this, "Đã xóa", Toast.LENGTH_SHORT).show();
-                loadData();
-            }
-        });
-
-        recyclerView.setAdapter(adapter);
     }
 
     private void initSampleData() {
@@ -146,24 +79,24 @@ public class SanPhamActivity extends AppCompatActivity {
                         3, 10, "active", "car", list.get(0).getId());
 
                 dao.insertProduct("Robot", "Robot thông minh", 50000, 0,
-                        5, 15, "active", "robot", list.get(1).getId());
+                        5, 15, "active", "robot", list.get(1).getId()); // 🔥 test hết hàng
             }
         }
     }
 
     private void loadData() {
         List<Product> list = dao.getAllProducts();
-        fullList.clear();
+        List<Product> filteredList = new ArrayList<>();
 
         for (Product p : list) {
             if (isShowInStock) {
-                if (p.getQuantity() > 0) fullList.add(p);
+                if (p.getQuantity() > 0) filteredList.add(p);
             } else {
-                if (p.getQuantity() == 0) fullList.add(p);
+                if (p.getQuantity() == 0) filteredList.add(p);
             }
         }
 
-        adapter = new ProductAdapter(this, new ArrayList<>(fullList), new ProductAdapter.OnItemClick() {
+        adapter = new ProductAdapter(this, filteredList, new ProductAdapter.OnItemClick() {
             @Override
             public void onEdit(Product p) {
                 showDialog(p);
@@ -227,6 +160,7 @@ public class SanPhamActivity extends AppCompatActivity {
             edtAgeFrom.setText(String.valueOf(product.getAgeFrom()));
             edtAgeTo.setText(String.valueOf(product.getAgeTo()));
         }
+
         btnClose.setOnClickListener(v -> dialog.dismiss());
 
         btnSave.setOnClickListener(v -> {

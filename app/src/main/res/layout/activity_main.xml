@@ -151,7 +151,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnCustomer"
+                android:id="@+id/btnkh"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -258,11 +258,15 @@
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <LinearLayout
-                android:id="@+id/layoutLowStock"
-                android:layout_width="match_parent"
+            <TextView
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:layout_width="wrap_content"
+                android:text="🚗 Xe đồ chơi - còn 2"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="🧸 Gấu bông - còn 1"/>
         </LinearLayout>
 
         <LinearLayout
