@@ -37,22 +37,23 @@
             android:layout_height="30dp"
             android:src="@android:drawable/ic_menu_search" />
     </LinearLayout>
-    <Button
-        android:id="@+id/btnAddOrder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#EE4D2D"
-        android:text="Đơn hàng mới"
-        android:textColor="#FFFFFF"
-        android:layout_margin="12dp"
-        android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerOrders"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/btnAddOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:backgroundTint="#EE4D2D"
+        android:text="Đơn hàng mới"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
 
 </LinearLayout>

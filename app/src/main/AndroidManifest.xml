@@ -22,10 +22,10 @@
         </activity>
 
         <activity android:name=".SanPhamActivity"/>
-
         <activity android:name=".CategoryActivity"/>
-
         <activity android:name=".CustomerActivity"/>
+        <activity android:name=".InvoiceActivity"/>
+        <activity android:name=".InvoiceDetailActivity"/>
 
     </application>
 
