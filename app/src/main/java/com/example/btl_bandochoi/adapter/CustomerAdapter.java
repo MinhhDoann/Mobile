@@ -29,7 +29,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtName, textGender, txtPhone, txtAddress, txtTotalSpent;
+        TextView txtName, textGender, txtPhone, txtAddress, txtGmail, txtTotalSpent;
         TextView btnEdit, btnDelete;
 
         public ViewHolder(View v) {
@@ -37,6 +37,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             txtName = v.findViewById(R.id.txtName);
             textGender = v.findViewById(R.id.txtGender);
             txtPhone = v.findViewById(R.id.txtPhone);
+            txtGmail = v.findViewById(R.id.txtGmail);
             txtAddress = v.findViewById(R.id.txtAddress);
             txtTotalSpent = v.findViewById(R.id.txtTotalSpent);
             btnEdit = v.findViewById(R.id.btnEdit);
@@ -70,6 +71,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         h.textGender.setText(genderText);
 
         h.txtPhone.setText(c.getPhone());
+        h.txtGmail.setText(c.getEmail());
         h.txtAddress.setText(c.getAddress());
         h.txtTotalSpent.setText(String.format("%,.0fđ", c.getTotalSpent()));
 
@@ -167,6 +169,23 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             }
             String phone = edtPhone.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
+            if (c == null) {
+                if (!email.isEmpty() && dao.isEmailExists(email)) {
+                    edtEmail.setError("Email đã tồn tại!");
+                    return;
+                }
+            } else {
+                if (!email.equals(c.getEmail())) {
+                    if (!email.isEmpty() && dao.isEmailExists(email)) {
+                        edtEmail.setError("Email đã tồn tại!");
+                        return;
+                    }
+                }
+            }
+            if (!email.isEmpty() && dao.isEmailExists(email)) {
+                edtEmail.setError("Email đã tồn tại!");
+                return;
+            }
             String address = edtAddress.getText().toString().trim();
             String status = spStatus.getSelectedItem().toString();
 

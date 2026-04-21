@@ -3,6 +3,7 @@ package com.example.btl_bandochoi;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.*;
@@ -12,26 +13,34 @@ import com.example.btl_bandochoi.data.ProductDAO;
 import com.example.btl_bandochoi.database.DatabaseHelper;
 import com.example.btl_bandochoi.model.Product;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock, btnhd;
+    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock, btntk, btnhd;
+    TextView txtshd, txtspb, txtdt;
     SharedPreferences prefs;
     boolean isLoggedIn;
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+
+        txtshd = findViewById(R.id.txtshd);
+        txtspb = findViewById(R.id.txtspb);
+        txtdt = findViewById(R.id.txtdt);
 
         btnsp = findViewById(R.id.btnsp);
         btnCategory = findViewById(R.id.btnCategory);
         btnCustomer = findViewById(R.id.btnCustomer);
+        btntk = findViewById(R.id.btntk);
         btnhd = findViewById(R.id.btnhd);
         layoutLowStock = findViewById(R.id.layoutLowStock);
 
@@ -61,16 +70,19 @@ public class MainActivity extends AppCompatActivity {
 
         btnCustomer.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomerActivity.class)));
+        btntk.setOnClickListener(v -> startActivity(new Intent(this, ThongKeActivity.class)));
 
         btnhd.setOnClickListener(v ->
                 startActivity(new Intent(this, InvoiceActivity.class)));
 
+        loadStatistics();
         loadLowStock();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        loadStatistics();
         loadLowStock();
     }
 
@@ -82,6 +94,32 @@ public class MainActivity extends AppCompatActivity {
             btnLogin.setText("Đăng nhập");
             txtName.setText("Chế độ xem");
         }
+    }
+
+    private void loadStatistics() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        Cursor cursorHD = db.rawQuery("SELECT COUNT(*) FROM Invoice WHERE date LIKE ?", new String[]{today + "%"});
+        int countHD = 0;
+        if (cursorHD.moveToFirst()) countHD = cursorHD.getInt(0);
+        cursorHD.close();
+        txtshd.setText("Số hóa đơn: " + countHD);
+
+        Cursor cursorSPB = db.rawQuery(
+                "SELECT SUM(id.quantity) FROM InvoiceDetail id " +
+                "JOIN Invoice i ON id.invoice_id = i.id " +
+                "WHERE i.date LIKE ?", new String[]{today + "%"});
+        int countSPB = 0;
+        if (cursorSPB.moveToFirst()) countSPB = cursorSPB.getInt(0);
+        cursorSPB.close();
+        txtspb.setText("Sản phẩm bán: " + countSPB);
+
+        Cursor cursorDT = db.rawQuery("SELECT SUM(total) FROM Invoice WHERE date LIKE ?", new String[]{today + "%"});
+        double totalDT = 0;
+        if (cursorDT.moveToFirst()) totalDT = cursorDT.getDouble(0);
+        cursorDT.close();
+        txtdt.setText(String.format("Doanh thu: %,.0fđ", totalDT));
     }
 
     private void loadLowStock() {

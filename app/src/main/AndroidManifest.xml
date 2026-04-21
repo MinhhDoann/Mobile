@@ -26,6 +26,7 @@
         <activity android:name=".CustomerActivity"/>
         <activity android:name=".InvoiceActivity"/>
         <activity android:name=".InvoiceDetailActivity"/>
+        <activity android:name=".ThongKeActivity"/>
 
     </application>
 

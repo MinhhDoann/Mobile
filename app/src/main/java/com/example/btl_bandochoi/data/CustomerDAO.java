@@ -29,7 +29,11 @@ public class CustomerDAO {
         }
 
         if (isPhoneExists(c.getPhone())) {
-            Log.w(TAG, "Phone already exists: " + c.getPhone());
+            Log.w(TAG, "Phone Đã Tồn Tại: " + c.getPhone());
+            return -2;
+        }
+        if (isEmailExists(c.getEmail())) {
+            Log.w(TAG, "Gmail Đã Tồn Tại: " + c.getEmail());
             return -2;
         }
 
@@ -74,6 +78,19 @@ public class CustomerDAO {
         } finally {
             if (cursor != null) cursor.close();
         }
+    }
+    public boolean isEmailExists(String email) {
+        if (email == null || email.trim().isEmpty()) return false;
+
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM Customer WHERE email = ?",
+                new String[]{email}
+        );
+
+        boolean exists = cursor.moveToFirst();
+
+        cursor.close();
+        return exists;
     }
 
     public int update(Customer c) {
