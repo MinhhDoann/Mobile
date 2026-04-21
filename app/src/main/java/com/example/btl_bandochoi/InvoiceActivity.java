@@ -22,7 +22,6 @@ import com.example.btl_bandochoi.data.InvoiceDAO;
 import com.example.btl_bandochoi.data.TransactionHistoryDAO;
 import com.example.btl_bandochoi.model.Customer;
 import com.example.btl_bandochoi.model.Invoice;
-import com.example.btl_bandochoi.model.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,15 +132,10 @@ public class InvoiceActivity extends AppCompatActivity {
             newInvoice.setStatus("Pending");
             newInvoice.setTotal(0.0);
 
-            long result = invoiceDAO.insertInvoice(newInvoice);
-            if (result > 0) {
-                // TỰ ĐỘNG LƯU VÀO LỊCH SỬ GIAO DỊCH
-                TransactionHistory history = new TransactionHistory();
-                history.setCustomerId(selectedCustomer.getId());
-                history.setInvoiceCode(code);
-                history.setTotalAmount(0.0);
-                history.setItemCount(0);
-                historyDAO.insert(history);
+            long newInvoiceId = invoiceDAO.insertInvoice(newInvoice);
+            if (newInvoiceId > 0) {
+                // LƯU VÀO LỊCH SỬ GIAO DỊCH DÙNG ID KHÓA NGOẠI
+                historyDAO.insert(selectedCustomer.getId(), (int)newInvoiceId);
 
                 Toast.makeText(this, "Thêm đơn hàng thành công", Toast.LENGTH_SHORT).show();
                 loadOrders();

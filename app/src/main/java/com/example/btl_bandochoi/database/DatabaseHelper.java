@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "ToyStore.db";
-    private static final int DB_VERSION = 3; // Nâng cấp để tạo bảng mới
+    private static final int DB_VERSION = 3; 
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -75,38 +75,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE SET NULL" +
                 ")");
 
-        // BẢNG LỊCH SỬ GIAO DỊCH KHÁCH HÀNG (MỚI)
+        // BẢNG LỊCH SỬ GIAO DỊCH KHÁCH HÀNG (SỬ DỤNG KHÓA NGOẠI)
         db.execSQL("CREATE TABLE TransactionHistory (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "customer_id INTEGER," +
-                "invoice_code TEXT," +
-                "total_amount REAL," +
-                "item_count INTEGER," +
+                "invoice_id INTEGER," +
                 "date TEXT DEFAULT (datetime('now','localtime'))," +
-                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE" +
+                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE," +
+                "FOREIGN KEY(invoice_id) REFERENCES Invoice(id) ON DELETE CASCADE" +
                 ")");
 
         seedData(db);
     }
 
     private void seedData(SQLiteDatabase db) {
-        // ... (Giữ nguyên các dữ liệu mẫu của bạn)
+        // ... (Giữ nguyên dữ liệu mẫu)
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 3) {
-            // Xóa bảng lịch sử cũ nếu có và tạo bảng lịch sử khách hàng
-            db.execSQL("DROP TABLE IF EXISTS StockHistory");
-            db.execSQL("CREATE TABLE TransactionHistory (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "customer_id INTEGER," +
-                    "invoice_code TEXT," +
-                    "total_amount REAL," +
-                    "item_count INTEGER," +
-                    "date TEXT DEFAULT (datetime('now','localtime'))," +
-                    "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE" +
-                    ")");
-        }
+        db.execSQL("DROP TABLE IF EXISTS TransactionHistory");
+        db.execSQL("DROP TABLE IF EXISTS StockHistory");
+        db.execSQL("DROP TABLE IF EXISTS InvoiceDetail");
+        db.execSQL("DROP TABLE IF EXISTS Invoice");
+        db.execSQL("DROP TABLE IF EXISTS Product");
+        db.execSQL("DROP TABLE IF EXISTS Customer");
+        db.execSQL("DROP TABLE IF EXISTS Category");
+        onCreate(db);
     }
 }

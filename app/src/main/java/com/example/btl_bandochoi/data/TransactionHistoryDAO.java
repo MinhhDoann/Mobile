@@ -20,19 +20,27 @@ public class TransactionHistoryDAO {
         List<TransactionHistory> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        Cursor cursor = db.query("TransactionHistory", null, "customer_id = ?",
-                new String[]{String.valueOf(customerId)}, null, null, "date DESC");
+        // Sử dụng JOIN để lấy thông tin thực tế từ bảng Invoice
+        String query = "SELECT th.id, th.customer_id, th.invoice_id, th.date, " +
+                       "i.invoice_code, i.total, " +
+                       "(SELECT COUNT(*) FROM InvoiceDetail WHERE invoice_id = i.id) as item_count " +
+                       "FROM TransactionHistory th " +
+                       "JOIN Invoice i ON th.invoice_id = i.id " +
+                       "WHERE th.customer_id = ? " +
+                       "ORDER BY th.date DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(customerId)});
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 TransactionHistory h = new TransactionHistory();
-                // Sửa lỗi: Lấy dữ liệu theo tên cột để tránh lệch index
-                h.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                h.setCustomerId(cursor.getInt(cursor.getColumnIndexOrThrow("customer_id")));
-                h.setInvoiceCode(cursor.getString(cursor.getColumnIndexOrThrow("invoice_code")));
-                h.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")));
-                h.setItemCount(cursor.getInt(cursor.getColumnIndexOrThrow("item_count")));
-                h.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
+                h.setId(cursor.getInt(0));
+                h.setCustomerId(cursor.getInt(1));
+                // Lấy thông tin từ bảng Invoice thông qua JOIN
+                h.setInvoiceCode(cursor.getString(4)); 
+                h.setTotalAmount(cursor.getDouble(5));
+                h.setItemCount(cursor.getInt(6));
+                h.setDate(cursor.getString(3));
                 list.add(h);
             } while (cursor.moveToNext());
             cursor.close();
@@ -40,21 +48,21 @@ public class TransactionHistoryDAO {
         return list;
     }
 
-    public long insert(TransactionHistory history) {
+    public long insert(int customerId, int invoiceId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues v = new ContentValues();
-        v.put("customer_id", history.getCustomerId());
-        v.put("invoice_code", history.getInvoiceCode());
-        v.put("total_amount", history.getTotalAmount());
-        v.put("item_count", history.getItemCount());
+        v.put("customer_id", customerId);
+        v.put("invoice_id", invoiceId);
         return db.insert("TransactionHistory", null, v);
     }
 
-    public int updateHistory(String invoiceCode, double totalAmount, int itemCount) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues v = new ContentValues();
-        v.put("total_amount", totalAmount);
-        v.put("item_count", itemCount);
-        return db.update("TransactionHistory", v, "invoice_code = ?", new String[]{invoiceCode});
+    // Phương thức kiểm tra và tự vá lịch sử nếu thiếu
+    public boolean exists(int invoiceId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM TransactionHistory WHERE invoice_id = ?", 
+                new String[]{String.valueOf(invoiceId)});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
     }
 }
