@@ -41,14 +41,14 @@
                 android:text="Nguyễn Thị Bé Ly"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginRight="20dp"/>
+                android:layout_marginRight="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="|"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginRight="20dp"/>
+                android:layout_marginRight="5dp"/>
             <TextView
                 android:id="@+id/txtGender"
                 android:layout_width="wrap_content"
@@ -63,6 +63,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0987 654 321"
+                android:textColor="#EE4D2D"
+                android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/txtGmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="huy@gmail.com"
                 android:textColor="#EE4D2D"
                 android:layout_marginTop="4dp" />
 
@@ -104,7 +111,6 @@
                     android:textStyle="bold"/>
             </LinearLayout>
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -128,4 +134,5 @@
 
         </LinearLayout>
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

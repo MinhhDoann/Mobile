@@ -43,8 +43,6 @@ public class CustomerDAO {
             values.put("image", c.getImage());
             values.put("status", c.getStatus() != null ? c.getStatus() : "active");
 
-            Log.d(TAG, "Attempting to insert: " + values.toString());
-
             long id = db.insertOrThrow("Customer", null, values);
 
             Log.i(TAG, "=== INSERT THÀNH CÔNG === ID = " + id);
@@ -99,20 +97,24 @@ public class CustomerDAO {
         Cursor cursor = null;
         try {
             cursor = db.rawQuery("SELECT * FROM Customer", null);
-            while (cursor.moveToNext()) {
-                Customer c = new Customer();
-                c.setId(cursor.getInt(0));
-                c.setName(cursor.getString(1));
-                c.setGender(cursor.getString(2));
-                c.setPhone(cursor.getString(3));
-                c.setEmail(cursor.getString(4));
-                c.setAddress(cursor.getString(5));
-                c.setImage(cursor.getString(6));
-                c.setCreatedDate(cursor.getString(7));
-                c.setTotalSpent(cursor.getDouble(8));
-                c.setStatus(cursor.getString(9));
-                list.add(c);
+            if (cursor.moveToFirst()) {
+                do {
+                    Customer c = new Customer();
+                    c.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                    c.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                    c.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
+                    c.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
+                    c.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+                    c.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
+                    c.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+                    c.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow("created_date")));
+                    c.setTotalSpent(cursor.getDouble(cursor.getColumnIndexOrThrow("total_spent")));
+                    c.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                    list.add(c);
+                } while (cursor.moveToNext());
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in getAll(): " + e.getMessage());
         } finally {
             if (cursor != null) cursor.close();
         }

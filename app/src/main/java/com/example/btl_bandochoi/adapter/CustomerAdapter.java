@@ -119,7 +119,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
                 genderList
         );
         spGender.setAdapter(genderAdapter);
-        spGender.setAdapter(genderAdapter);
         EditText edtPhone = dialog.findViewById(R.id.edtPhone);
         EditText edtEmail = dialog.findViewById(R.id.edtEmail);
         EditText edtAddress = dialog.findViewById(R.id.edtAddress);
