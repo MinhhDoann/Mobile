@@ -41,17 +41,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             tvName = itemView.findViewById(R.id.txtName);
             tvPrice = itemView.findViewById(R.id.txtPrice);
             tvQuantity = itemView.findViewById(R.id.txtQuantity);
-
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtAge = itemView.findViewById(R.id.txtAge);
             txtStatus = itemView.findViewById(R.id.txtStatus);
-
             layoutExtra = itemView.findViewById(R.id.layoutExtra);
-
             imgProduct = itemView.findViewById(R.id.imgProduct);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
@@ -67,7 +63,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Product p = list.get(position);
 
         holder.tvName.setText(p.getName());
@@ -79,15 +74,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.txtStatus.setText("Trạng thái: " + p.getStatus());
 
         try {
-            int resId = context.getResources().getIdentifier(
-                    p.getImage(), "drawable", context.getPackageName()
-            );
-
-            if (resId != 0) {
-                holder.imgProduct.setImageResource(resId);
-            } else {
-                holder.imgProduct.setImageResource(R.drawable.car);
-            }
+            int resId = context.getResources().getIdentifier(p.getImage(), "drawable", context.getPackageName());
+            holder.imgProduct.setImageResource(resId != 0 ? resId : R.drawable.car);
         } catch (Exception e) {
             holder.imgProduct.setImageResource(R.drawable.car);
         }
@@ -99,13 +87,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             notifyItemChanged(position);
         });
 
-        holder.btnEdit.setOnClickListener(v -> {
-            if (listener != null) listener.onEdit(p);
-        });
-
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDelete(p);
-        });
+        holder.btnEdit.setOnClickListener(v -> { if (listener != null) listener.onEdit(p); });
+        holder.btnDelete.setOnClickListener(v -> { if (listener != null) listener.onDelete(p); });
     }
 
     @Override

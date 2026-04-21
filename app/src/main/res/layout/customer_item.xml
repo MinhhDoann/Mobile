@@ -8,55 +8,117 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgAvatar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/circle_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/avatar" />
-
+        <!-- Thông tin chính của khách hàng -->
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:id="@+id/layoutMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/circle_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/avatar" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên khách hàng"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0000 000 000"
+                    android:textColor="#EE4D2D"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/txtAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="end">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng chi"
+                    android:textSize="12sp"
+                    android:textColor="#888888" />
+                <TextView
+                    android:id="@+id/txtTotalSpent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0đ"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Phần mở rộng hiển thị Lịch sử Hóa đơn -->
+        <LinearLayout
+            android:id="@+id/layoutExtra"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:visibility="gone"
+            android:background="#FAFAFA"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="12dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
-                android:id="@+id/txtName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nguyễn Thị Bé Ly"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0987 654 321"
-                android:textColor="#EE4D2D"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/txtAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hà Nội"
-                android:textColor="#666666"
+                android:text="Lịch sử mua hàng"
                 android:textSize="13sp"
-                android:layout_marginTop="2dp" />
+                android:textStyle="bold"
+                android:textColor="#666666"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCustomerInvoices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Nút chức năng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="10dp">
-
+                android:layout_marginTop="12dp">
                 <TextView
                     android:id="@+id/btnEdit"
                     android:layout_width="0dp"
@@ -64,10 +126,9 @@
                     android:layout_height="36dp"
                     android:background="@drawable/btnsanpham"
                     android:gravity="center"
-                    android:text="Sửa"
-                    android:textColor="#FF5722"
+                    android:text="Chỉnh sửa"
+                    android:textColor="#2196F3"
                     android:textStyle="bold"/>
-
                 <TextView
                     android:id="@+id/btnDelete"
                     android:layout_width="0dp"
@@ -80,29 +141,6 @@
                     android:textColor="#F44336"
                     android:textStyle="bold"/>
             </LinearLayout>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Số tiền đã chi"
-                android:textSize="12sp"
-                android:textColor="#888888" />
-            <TextView
-                android:id="@+id/txtTotalSpent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2.450.000đ"
-                android:textColor="#4CAF50"
-                android:textStyle="bold" />
-
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

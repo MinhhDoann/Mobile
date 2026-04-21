@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "ToyStore.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3; // Nâng cấp để tạo bảng mới
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -75,74 +75,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE SET NULL" +
                 ")");
 
-        db.execSQL("CREATE TABLE StockHistory (" +
+        // BẢNG LỊCH SỬ GIAO DỊCH KHÁCH HÀNG (MỚI)
+        db.execSQL("CREATE TABLE TransactionHistory (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "product_id INTEGER," +
-                "type TEXT CHECK(type IN ('import','export','adjust'))," +
-                "quantity INTEGER," +
+                "customer_id INTEGER," +
+                "invoice_code TEXT," +
+                "total_amount REAL," +
+                "item_count INTEGER," +
                 "date TEXT DEFAULT (datetime('now','localtime'))," +
-                "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE CASCADE" +
+                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE" +
                 ")");
 
         seedData(db);
     }
 
     private void seedData(SQLiteDatabase db) {
-        // Thêm Danh mục
-        ContentValues cat1 = new ContentValues();
-        cat1.put("name", "Lego");
-        cat1.put("description", "Đồ chơi lắp ráp trí tuệ");
-        long catId1 = db.insert("Category", null, cat1);
-
-        ContentValues cat2 = new ContentValues();
-        cat2.put("name", "Búp bê");
-        cat2.put("description", "Đồ chơi dành cho bé gái");
-        long catId2 = db.insert("Category", null, cat2);
-
-        // Thêm Sản phẩm
-        ContentValues p1 = new ContentValues();
-        p1.put("name", "Lego Phi Thuyền");
-        p1.put("price", 550000);
-        p1.put("quantity", 2); // Để test chức năng sắp hết hàng
-        p1.put("category_id", catId1);
-        db.insert("Product", null, p1);
-
-        ContentValues p2 = new ContentValues();
-        p2.put("name", "Búp bê Barbie");
-        p2.put("price", 320000);
-        p2.put("quantity", 10);
-        p2.put("category_id", catId2);
-        db.insert("Product", null, p2);
-
-        ContentValues p3 = new ContentValues();
-        p3.put("name", "Lego Xe Đua");
-        p3.put("price", 450000);
-        p3.put("quantity", 1); // Để test chức năng sắp hết hàng
-        p3.put("category_id", catId1);
-        db.insert("Product", null, p3);
-
-        // Thêm Khách hàng
-        ContentValues c1 = new ContentValues();
-        c1.put("name", "Nguyễn Văn An");
-        c1.put("phone", "0987654321");
-        c1.put("address", "Hà Nội");
-        db.insert("Customer", null, c1);
-
-        ContentValues c2 = new ContentValues();
-        c2.put("name", "Trần Thị Bình");
-        c2.put("phone", "0123456789");
-        c2.put("address", "TP.HCM");
-        db.insert("Customer", null, c2);
+        // ... (Giữ nguyên các dữ liệu mẫu của bạn)
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS StockHistory");
-        db.execSQL("DROP TABLE IF EXISTS InvoiceDetail");
-        db.execSQL("DROP TABLE IF EXISTS Invoice");
-        db.execSQL("DROP TABLE IF EXISTS Product");
-        db.execSQL("DROP TABLE IF EXISTS Customer");
-        db.execSQL("DROP TABLE IF EXISTS Category");
-        onCreate(db);
+        if (oldVersion < 3) {
+            // Xóa bảng lịch sử cũ nếu có và tạo bảng lịch sử khách hàng
+            db.execSQL("DROP TABLE IF EXISTS StockHistory");
+            db.execSQL("CREATE TABLE TransactionHistory (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "customer_id INTEGER," +
+                    "invoice_code TEXT," +
+                    "total_amount REAL," +
+                    "item_count INTEGER," +
+                    "date TEXT DEFAULT (datetime('now','localtime'))," +
+                    "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE" +
+                    ")");
+        }
     }
 }

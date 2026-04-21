@@ -4,36 +4,22 @@ public class Customer {
     private int id;
     private String name;
     private String phone;
-    private String image;
-
     private String email;
     private String address;
+    private String image;
     private String createdDate;
     private double totalSpent;
     private String status;
+    private boolean isExpanded = false; // Thêm để quản lý đóng/mở lịch sử mua hàng
 
     public Customer() {}
-
-    public Customer(int id, String name, String phone, String email,
-                    String address, String createdDate,
-                    double totalSpent, String status) {
-        this.id = id;
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.createdDate = createdDate;
-        this.totalSpent = totalSpent;
-        this.status = status;
-    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public String getImage() { return image; }
-    public void setImage(String image) { this.image = image; }
+
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
@@ -43,6 +29,9 @@ public class Customer {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+
     public String getCreatedDate() { return createdDate; }
     public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
 
@@ -51,4 +40,7 @@ public class Customer {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public boolean isExpanded() { return isExpanded; }
+    public void setExpanded(boolean expanded) { isExpanded = expanded; }
 }

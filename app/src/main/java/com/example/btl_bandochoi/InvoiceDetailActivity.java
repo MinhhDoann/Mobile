@@ -19,9 +19,11 @@ import com.example.btl_bandochoi.adapter.InvoiceDetailAdapter;
 import com.example.btl_bandochoi.data.InvoiceDAO;
 import com.example.btl_bandochoi.data.InvoiceDetailDAO;
 import com.example.btl_bandochoi.data.ProductDAO;
+import com.example.btl_bandochoi.data.TransactionHistoryDAO;
 import com.example.btl_bandochoi.model.Invoice;
 import com.example.btl_bandochoi.model.InvoiceDetail;
 import com.example.btl_bandochoi.model.Product;
+import com.example.btl_bandochoi.model.TransactionHistory;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class InvoiceDetailActivity extends AppCompatActivity {
     private InvoiceDAO invoiceDAO;
     private InvoiceDetailDAO detailDAO;
     private ProductDAO productDAO;
+    private TransactionHistoryDAO historyDAO; 
     private int invoiceId;
     private DecimalFormat df = new DecimalFormat("#,### ₫");
 
@@ -49,6 +52,7 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         invoiceDAO = new InvoiceDAO(this);
         detailDAO = new InvoiceDetailDAO(this);
         productDAO = new ProductDAO(this);
+        historyDAO = new TransactionHistoryDAO(this);
         
         invoiceId = getIntent().getIntExtra("invoice_id", -1);
 
@@ -85,18 +89,27 @@ public class InvoiceDetailActivity extends AppCompatActivity {
             txtAddress.setText("Địa chỉ: " + (invoice.getCustomerAddress() != null ? invoice.getCustomerAddress() : "Chưa cập nhật"));
             txtOrderDate.setText("Ngày đặt hàng: " + invoice.getDate());
             
-            // Load danh sách sản phẩm chi tiết
             List<InvoiceDetail> details = detailDAO.getDetailsByInvoiceId(invoiceId);
             
-            // Tính toán lại tổng tiền dựa trên các sản phẩm thực tế
             double total = 0;
             for (InvoiceDetail d : details) {
                 total += d.getSubTotal();
             }
             
-            // Cập nhật tổng tiền vào Database bảng Invoice nếu có thay đổi
-            if (total != invoice.getTotal()) {
-                invoiceDAO.updateTotal(invoiceId, total);
+            // 1. Cập nhật bảng Invoice
+            invoiceDAO.updateTotal(invoiceId, total);
+            
+            // 2. Cập nhật bảng Lịch sử giao dịch (TransactionHistory)
+            // Nếu chưa có bản ghi (do hóa đơn cũ), updated sẽ bằng 0
+            int updated = historyDAO.updateHistory(invoice.getInvoiceCode(), total, details.size());
+            if (updated == 0) {
+                // Tự động tạo bản ghi lịch sử nếu thiếu
+                TransactionHistory h = new TransactionHistory();
+                h.setCustomerId(invoice.getCustomerId());
+                h.setInvoiceCode(invoice.getInvoiceCode());
+                h.setTotalAmount(total);
+                h.setItemCount(details.size());
+                historyDAO.insert(h);
             }
 
             txtSubtotal.setText(df.format(total));
@@ -104,13 +117,12 @@ public class InvoiceDetailActivity extends AppCompatActivity {
             txtTotalAmount.setText(df.format(total));
 
             InvoiceDetailAdapter adapter = new InvoiceDetailAdapter(details, detail -> {
-                // Xử lý XÓA sản phẩm
                 new AlertDialog.Builder(this)
                         .setTitle("Xác nhận xóa")
                         .setMessage("Bạn có muốn xóa sản phẩm này khỏi đơn hàng?")
                         .setPositiveButton("Xóa", (dialog, which) -> {
                             detailDAO.delete(detail.getId());
-                            loadInvoiceData(); // Tải lại để cập nhật tổng tiền
+                            loadInvoiceData(); 
                         })
                         .setNegativeButton("Hủy", null)
                         .show();
@@ -122,10 +134,8 @@ public class InvoiceDetailActivity extends AppCompatActivity {
 
     private void setEvent() {
         btnBack.setOnClickListener(v -> finish());
-
         imgExpand.setOnClickListener(v -> toggleProductList());
         txtProductTitle.setOnClickListener(v -> toggleProductList());
-
         btnAddProductItem.setOnClickListener(v -> showAddProductDialog());
     }
 
@@ -149,7 +159,6 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSave);
         Button btnCancel = view.findViewById(R.id.btnCancel);
 
-        // Load danh sách sản phẩm từ DB
         List<Product> products = productDAO.getAllProducts();
         List<String> productNames = new ArrayList<>();
         for (Product p : products) {
@@ -165,21 +174,17 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> {
             String quantityStr = edtQuantity.getText().toString();
             if (quantityStr.isEmpty() || products.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập số lượng và chọn sản phẩm", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng nhập số lượng", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             int quantity = Integer.parseInt(quantityStr);
             Product selectedProduct = products.get(spinnerProduct.getSelectedItemPosition());
 
-            // Kiểm tra xem sản phẩm đã có trong đơn hàng chưa
             InvoiceDetail existingDetail = detailDAO.getDetailByInvoiceAndProduct(invoiceId, selectedProduct.getId());
-            
             if (existingDetail != null) {
-                // Nếu đã có, cộng dồn số lượng
                 detailDAO.updateQuantity(existingDetail.getId(), existingDetail.getQuantity() + quantity);
             } else {
-                // Nếu chưa có, thêm mới
                 InvoiceDetail detail = new InvoiceDetail();
                 detail.setInvoiceId(invoiceId);
                 detail.setProductId(selectedProduct.getId());
@@ -189,8 +194,7 @@ public class InvoiceDetailActivity extends AppCompatActivity {
                 detailDAO.insert(detail);
             }
 
-            Toast.makeText(this, "Đã thêm sản phẩm vào đơn hàng", Toast.LENGTH_SHORT).show();
-            loadInvoiceData(); // Tải lại giao diện và cập nhật tổng tiền
+            loadInvoiceData();
             dialog.dismiss();
         });
 

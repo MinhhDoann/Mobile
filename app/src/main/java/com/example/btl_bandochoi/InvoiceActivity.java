@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.btl_bandochoi.adapter.InvoiceAdapter;
 import com.example.btl_bandochoi.data.CustomerDAO;
 import com.example.btl_bandochoi.data.InvoiceDAO;
+import com.example.btl_bandochoi.data.TransactionHistoryDAO;
 import com.example.btl_bandochoi.model.Customer;
 import com.example.btl_bandochoi.model.Invoice;
+import com.example.btl_bandochoi.model.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class InvoiceActivity extends AppCompatActivity {
     private Button btnAddOrder;
     private InvoiceDAO invoiceDAO;
     private CustomerDAO customerDAO;
+    private TransactionHistoryDAO historyDAO;
     private List<Invoice> invoiceList;
     private InvoiceAdapter invoiceAdapter;
 
@@ -42,6 +45,7 @@ public class InvoiceActivity extends AppCompatActivity {
 
         invoiceDAO = new InvoiceDAO(this);
         customerDAO = new CustomerDAO(this);
+        historyDAO = new TransactionHistoryDAO(this);
 
         anhXa();
         setupRecyclerView();
@@ -93,7 +97,6 @@ public class InvoiceActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSave);
         Button btnCancel = view.findViewById(R.id.btnCancel);
 
-        // Load danh sách khách hàng vào Spinner
         List<Customer> customers = customerDAO.getAll();
         List<String> customerNames = new ArrayList<>();
         for (Customer c : customers) {
@@ -130,11 +133,18 @@ public class InvoiceActivity extends AppCompatActivity {
             newInvoice.setStatus("Pending");
             newInvoice.setTotal(0.0);
 
-            // Sửa lỗi: Gọi đúng phương thức insertInvoice thay vì insert
             long result = invoiceDAO.insertInvoice(newInvoice);
             if (result > 0) {
+                // TỰ ĐỘNG LƯU VÀO LỊCH SỬ GIAO DỊCH
+                TransactionHistory history = new TransactionHistory();
+                history.setCustomerId(selectedCustomer.getId());
+                history.setInvoiceCode(code);
+                history.setTotalAmount(0.0);
+                history.setItemCount(0);
+                historyDAO.insert(history);
+
                 Toast.makeText(this, "Thêm đơn hàng thành công", Toast.LENGTH_SHORT).show();
-                loadOrders(); // Tải lại danh sách
+                loadOrders();
                 dialog.dismiss();
             } else {
                 Toast.makeText(this, "Thêm đơn hàng thất bại", Toast.LENGTH_SHORT).show();
@@ -142,7 +152,6 @@ public class InvoiceActivity extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-
         dialog.show();
     }
 
