@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:gravity="center_vertical"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/txtInvoiceCode"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Mã HD"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:layout_height="wrap_content"
+        android:text="Ngày"
+        android:textColor="#555555"
+        android:textSize="11sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/txtItemCount"
+        android:layout_width="0dp"
+        android:layout_weight="0.8"
+        android:layout_height="wrap_content"
+        android:text="0 sp"
+        android:textColor="#555555"
+        android:textSize="11sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/txtTotal"
+        android:layout_width="0dp"
+        android:layout_weight="1.2"
+        android:layout_height="wrap_content"
+        android:text="0đ"
+        android:textColor="#EE4D2D"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:gravity="end"/>
+
+</LinearLayout>

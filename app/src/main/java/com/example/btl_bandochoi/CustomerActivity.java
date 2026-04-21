@@ -62,7 +62,7 @@ public class CustomerActivity extends AppCompatActivity {
             } else {
                 etSearch.setVisibility(View.GONE);
                 etSearch.setText("");
-                loadData();
+                loadData(); // Làm mới dữ liệu khi đóng tìm kiếm
             }
         });
 
@@ -86,13 +86,21 @@ public class CustomerActivity extends AppCompatActivity {
     }
 
     private void filter(String text) {
+        if (originalList == null) return;
+        
         List<Customer> filtered = new ArrayList<>();
+        String query = text.toLowerCase().trim();
+        
         for (Customer c : originalList) {
-            if (c.getName().toLowerCase().contains(text.toLowerCase())
-                    || c.getPhone().contains(text)) {
+            // Kiểm tra null an toàn trước khi so sánh để tránh văng app
+            String name = (c.getName() != null) ? c.getName().toLowerCase() : "";
+            String phone = (c.getPhone() != null) ? c.getPhone() : "";
+            
+            if (name.contains(query) || phone.contains(query)) {
                 filtered.add(c);
             }
         }
+
         if (adapter != null) {
             adapter.updateList(filtered);
         }

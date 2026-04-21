@@ -62,7 +62,7 @@ public class CustomerDAO {
         }
     }
 
-    private boolean isPhoneExists(String phone) {
+    public boolean isPhoneExists(String phone) {
         if (phone == null || phone.trim().isEmpty()) return false;
 
         Cursor cursor = null;
@@ -79,6 +79,7 @@ public class CustomerDAO {
             if (cursor != null) cursor.close();
         }
     }
+
     public boolean isEmailExists(String email) {
         if (email == null || email.trim().isEmpty()) return false;
 
@@ -88,7 +89,6 @@ public class CustomerDAO {
         );
 
         boolean exists = cursor.moveToFirst();
-
         cursor.close();
         return exists;
     }
@@ -113,7 +113,11 @@ public class CustomerDAO {
         List<Customer> list = new ArrayList<>();
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT * FROM Customer", null);
+            String query = "SELECT c.*, " +
+                           "(SELECT SUM(total) FROM Invoice WHERE customer_id = c.id) as calculated_total " +
+                           "FROM Customer c";
+            
+            cursor = db.rawQuery(query, null);
             if (cursor.moveToFirst()) {
                 do {
                     Customer c = new Customer();
@@ -125,8 +129,11 @@ public class CustomerDAO {
                     c.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
                     c.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
                     c.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow("created_date")));
-                    c.setTotalSpent(cursor.getDouble(cursor.getColumnIndexOrThrow("total_spent")));
                     c.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                    
+                    double totalSpent = cursor.getDouble(cursor.getColumnIndexOrThrow("calculated_total"));
+                    c.setTotalSpent(totalSpent);
+
                     list.add(c);
                 } while (cursor.moveToNext());
             }

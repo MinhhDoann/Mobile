@@ -76,15 +76,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE SET NULL" +
                 ")");
 
-        db.execSQL("CREATE TABLE StockHistory (" +
+        db.execSQL("CREATE TABLE TransactionHistory (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "product_id INTEGER," +
-                "type TEXT CHECK(type IN ('import','export','adjust'))," +
-                "quantity INTEGER," +
+                "customer_id INTEGER," +
+                "invoice_id INTEGER," +
                 "date TEXT DEFAULT (datetime('now','localtime'))," +
-                "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE CASCADE" +
+                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE," +
+                "FOREIGN KEY(invoice_id) REFERENCES Invoice(id) ON DELETE CASCADE" +
                 ")");
-
         seedData(db);
     }
 
