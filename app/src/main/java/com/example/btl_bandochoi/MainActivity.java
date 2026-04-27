@@ -20,7 +20,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock, btntk, btnhd;
+    LinearLayout btnsp, btnCategory, btnCustomer, layoutLowStock, btntk, btnhd, btnht;
     TextView txtshd, txtspb, txtdt;
     SharedPreferences prefs;
     boolean isLoggedIn;
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         btnCustomer = findViewById(R.id.btnCustomer);
         btntk = findViewById(R.id.btntk);
         btnhd = findViewById(R.id.btnhd);
+        btnht = findViewById(R.id.btnht);
         layoutLowStock = findViewById(R.id.layoutLowStock);
 
         Button btnLogin = findViewById(R.id.btnlogin);
@@ -70,10 +71,15 @@ public class MainActivity extends AppCompatActivity {
 
         btnCustomer.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomerActivity.class)));
-        btntk.setOnClickListener(v -> startActivity(new Intent(this, ThongKeActivity.class)));
+
+        btntk.setOnClickListener(v ->
+                startActivity(new Intent(this, ThongKeActivity.class)));
 
         btnhd.setOnClickListener(v ->
                 startActivity(new Intent(this, InvoiceActivity.class)));
+
+        btnht.setOnClickListener(v ->
+                startActivity(new Intent(this, SupportActivity.class)));
 
         loadStatistics();
         loadLowStock();

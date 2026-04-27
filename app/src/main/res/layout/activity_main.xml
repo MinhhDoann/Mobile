@@ -116,7 +116,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/sanpham_img"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -139,7 +139,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/hoadon"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,7 +162,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/khachhang"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -185,7 +185,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/danhmuc"/>
 
                 <TextView
                     android:text="Danh mục"
@@ -208,7 +208,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/thongke"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -231,7 +231,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/avatar"/>
+                    android:src="@drawable/hoadon"/>
 
                 <TextView
                     android:layout_width="wrap_content"
