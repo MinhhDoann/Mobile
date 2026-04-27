@@ -3,6 +3,7 @@ package com.example.btl_bandochoi.adapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,16 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.customer_item, parent, false));
     }
 
+    // Hàm kiểm tra trạng thái đăng nhập
+    private boolean checkLogin() {
+        SharedPreferences prefs = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("isLogin", false);
+        if (!isLoggedIn) {
+            Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+        }
+        return isLoggedIn;
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder h, int position) {
         Customer c = list.get(position);
@@ -98,13 +109,22 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             notifyItemChanged(expandedPosition);
         });
 
-        h.btnEdit.setOnClickListener(v -> showDialog(c));
+        // Chặn nút Sửa nếu chưa đăng nhập
+        h.btnEdit.setOnClickListener(v -> {
+            if (checkLogin()) {
+                showDialog(c);
+            }
+        });
+
+        // Chặn nút Xóa nếu chưa đăng nhập
         h.btnDelete.setOnClickListener(v -> {
-            new AlertDialog.Builder(context).setTitle("Xóa khách hàng?").setMessage("Bạn chắc chắn muốn xóa không?")
-                    .setPositiveButton("Xóa", (dialog, which) -> {
-                        dao.delete(c.getId());
-                        reloadData();
-                    }).setNegativeButton("Hủy", null).show();
+            if (checkLogin()) {
+                new AlertDialog.Builder(context).setTitle("Xóa khách hàng?").setMessage("Bạn chắc chắn muốn xóa không?")
+                        .setPositiveButton("Xóa", (dialog, which) -> {
+                            dao.delete(c.getId());
+                            reloadData();
+                        }).setNegativeButton("Hủy", null).show();
+            }
         });
     }
 
@@ -188,5 +208,9 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         dialog.show();
     }
 
-    public void showAddDialog() { showDialog(null); }
+    public void showAddDialog() {
+        if (checkLogin()) {
+            showDialog(null);
+        }
+    }
 }
