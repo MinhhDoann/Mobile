@@ -40,9 +40,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         TextView btnEdit, btnDelete;
         LinearLayout layoutExtra;
         RecyclerView recyclerInvoices;
+        ImageView imgAvatar;
 
         public ViewHolder(View v) {
             super(v);
+            imgAvatar = v.findViewById(R.id.imgAvatar);
             txtName = v.findViewById(R.id.txtName);
             textGender = v.findViewById(R.id.txtGender);
             txtPhone = v.findViewById(R.id.txtPhone);
@@ -61,7 +63,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.customer_item, parent, false));
     }
 
-    // Hàm kiểm tra trạng thái đăng nhập
     private boolean checkLogin() {
         SharedPreferences prefs = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
         boolean isLoggedIn = prefs.getBoolean("isLogin", false);
@@ -74,14 +75,23 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder h, int position) {
         Customer c = list.get(position);
+        
+        String gender = (c.getGender() != null) ? c.getGender().toLowerCase() : "";
+        
+        if ("nữ".equals(gender)) {
+            h.imgAvatar.setImageResource(R.drawable.nu);
+        } else {
+            h.imgAvatar.setImageResource(R.drawable.avatar);
+        }
+
         h.txtName.setText(c.getName());
         h.txtPhone.setText(c.getPhone());
         h.txtAddress.setText(c.getAddress());
         h.txtTotalSpent.setText(String.format("%,.0fđ", c.getTotalSpent()));
 
         String genderText = "Khác";
-        if ("nam".equals(c.getGender())) genderText = "Nam";
-        else if ("nữ".equals(c.getGender())) genderText = "Nữ";
+        if ("nam".equals(gender)) genderText = "Nam";
+        else if ("nữ".equals(gender)) genderText = "Nữ";
         h.textGender.setText(genderText);
 
         if (c.getEmail() == null || c.getEmail().isEmpty()) {

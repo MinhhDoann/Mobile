@@ -25,7 +25,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Đơn hàng"
+            android:text="Hóa Đơn"
             android:textColor="#333333"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:backgroundTint="#EE4D2D"
-        android:text="Đơn hàng mới"
+        android:text="Hóa đơn mới"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
 

@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor cursorSPB = db.rawQuery(
                 "SELECT SUM(id.quantity) FROM InvoiceDetail id " +
-                "JOIN Invoice i ON id.invoice_id = i.id " +
-                "WHERE i.date LIKE ?", new String[]{today + "%"});
+                        "JOIN Invoice i ON id.invoice_id = i.id " +
+                        "WHERE i.date LIKE ?", new String[]{today + "%"});
         int countSPB = 0;
         if (cursorSPB.moveToFirst()) countSPB = cursorSPB.getInt(0);
         cursorSPB.close();

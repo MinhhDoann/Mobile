@@ -7,6 +7,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btl_bandochoi.adapter.CategoryAdapter;
 import com.example.btl_bandochoi.data.CategoryDAO;
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class CategoryActivity extends AppCompatActivity {
 
-    ListView listView;
+    RecyclerView recyclerView;
     CategoryDAO dao;
     CategoryAdapter adapter;
 
@@ -31,11 +33,13 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        listView = findViewById(R.id.listViewCategory);
+        recyclerView = findViewById(R.id.recyclerViewCategory);
         edtSearch = findViewById(R.id.edtSearch);
         btnSearch = findViewById(R.id.btnSearch);
 
         dao = new CategoryDAO(this);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         loadData();
 
@@ -47,6 +51,7 @@ public class CategoryActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(v -> {
             if (edtSearch.getVisibility() == View.GONE) {
                 edtSearch.setVisibility(View.VISIBLE);
+                edtSearch.requestFocus();
             } else {
                 edtSearch.setVisibility(View.GONE);
                 edtSearch.setText("");
@@ -70,34 +75,21 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void loadData() {
         fullList = dao.getAll();
-
-        adapter = new CategoryAdapter(this, fullList, new CategoryAdapter.OnAction() {
-            @Override
-            public void onEdit(Category c) {
-                showDialog(c);
-            }
-
-            @Override
-            public void onDelete(Category c) {
-                dao.delete(c.getId());
-                Toast.makeText(CategoryActivity.this, "Đã xóa", Toast.LENGTH_SHORT).show();
-                loadData();
-            }
-        });
-
-        listView.setAdapter(adapter);
+        updateAdapter(fullList);
     }
 
     private void filter(String keyword) {
         List<Category> filtered = new ArrayList<>();
-
         for (Category c : fullList) {
             if (c.getName().toLowerCase().contains(keyword.toLowerCase())) {
                 filtered.add(c);
             }
         }
+        updateAdapter(filtered);
+    }
 
-        adapter = new CategoryAdapter(this, filtered, new CategoryAdapter.OnAction() {
+    private void updateAdapter(List<Category> list) {
+        adapter = new CategoryAdapter(this, list, new CategoryAdapter.OnAction() {
             @Override
             public void onEdit(Category c) {
                 showDialog(c);
@@ -110,8 +102,7 @@ public class CategoryActivity extends AppCompatActivity {
                 loadData();
             }
         });
-
-        listView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
     }
 
     private void showDialog(Category c) {
@@ -122,7 +113,7 @@ public class CategoryActivity extends AppCompatActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
         ImageView btnClose = dialog.findViewById(R.id.btnClose);
 
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        if (btnClose != null) btnClose.setOnClickListener(v -> dialog.dismiss());
 
         if (c != null) {
             edtName.setText(c.getName());
@@ -148,9 +139,11 @@ public class CategoryActivity extends AppCompatActivity {
 
         dialog.show();
 
-        dialog.getWindow().setLayout(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+        }
     }
 }

@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Danh Mục"
+            android:text="DANH MỤC"
             android:textSize="20sp"
             android:gravity="center"/>
 
@@ -36,33 +36,35 @@
         android:id="@+id/edtSearch"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:hint="Tìm sản phẩm..."
+        android:hint="Tìm kiếm danh mục..."
         android:padding="10dp"
         android:visibility="gone"
-        android:background="@android:drawable/edit_text"/>
+        android:background="@drawable/banner"/>
 
-    <ListView
-        android:id="@+id/listViewCategory"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCategory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="#00000000"
-        android:dividerHeight="8dp"
         android:clipToPadding="false"
+        android:paddingTop="10dp"
         android:paddingBottom="20dp"/>
+
     <LinearLayout
+        android:id="@+id/btnAddCategory"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/btn"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true">
         <TextView
-            android:id="@+id/btnAddCategory"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:text="Thêm danh mục mới"
             android:textStyle="bold"
-            android:textSize="7pt"
+            android:textSize="16sp"
             android:textColor="@color/white" />
     </LinearLayout>
 
