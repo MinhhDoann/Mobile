@@ -29,7 +29,11 @@ public class CustomerDAO {
         }
 
         if (isPhoneExists(c.getPhone())) {
-            Log.w(TAG, "Phone already exists: " + c.getPhone());
+            Log.w(TAG, "Phone Đã Tồn Tại: " + c.getPhone());
+            return -2;
+        }
+        if (isEmailExists(c.getEmail())) {
+            Log.w(TAG, "Gmail Đã Tồn Tại: " + c.getEmail());
             return -2;
         }
 
@@ -42,8 +46,6 @@ public class CustomerDAO {
             values.put("address", c.getAddress() != null ? c.getAddress().trim() : null);
             values.put("image", c.getImage());
             values.put("status", c.getStatus() != null ? c.getStatus() : "active");
-
-            Log.d(TAG, "Attempting to insert: " + values.toString());
 
             long id = db.insertOrThrow("Customer", null, values);
 
@@ -60,7 +62,7 @@ public class CustomerDAO {
         }
     }
 
-    private boolean isPhoneExists(String phone) {
+    public boolean isPhoneExists(String phone) {
         if (phone == null || phone.trim().isEmpty()) return false;
 
         Cursor cursor = null;
@@ -76,6 +78,19 @@ public class CustomerDAO {
         } finally {
             if (cursor != null) cursor.close();
         }
+    }
+
+    public boolean isEmailExists(String email) {
+        if (email == null || email.trim().isEmpty()) return false;
+
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM Customer WHERE email = ?",
+                new String[]{email}
+        );
+
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
     }
 
     public int update(Customer c) {
@@ -98,21 +113,32 @@ public class CustomerDAO {
         List<Customer> list = new ArrayList<>();
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT * FROM Customer", null);
-            while (cursor.moveToNext()) {
-                Customer c = new Customer();
-                c.setId(cursor.getInt(0));
-                c.setName(cursor.getString(1));
-                c.setGender(cursor.getString(2));
-                c.setPhone(cursor.getString(3));
-                c.setEmail(cursor.getString(4));
-                c.setAddress(cursor.getString(5));
-                c.setImage(cursor.getString(6));
-                c.setCreatedDate(cursor.getString(7));
-                c.setTotalSpent(cursor.getDouble(8));
-                c.setStatus(cursor.getString(9));
-                list.add(c);
+            String query = "SELECT c.*, " +
+                           "(SELECT SUM(total) FROM Invoice WHERE customer_id = c.id) as calculated_total " +
+                           "FROM Customer c";
+            
+            cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    Customer c = new Customer();
+                    c.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                    c.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                    c.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
+                    c.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
+                    c.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+                    c.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
+                    c.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+                    c.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow("created_date")));
+                    c.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                    
+                    double totalSpent = cursor.getDouble(cursor.getColumnIndexOrThrow("calculated_total"));
+                    c.setTotalSpent(totalSpent);
+
+                    list.add(c);
+                } while (cursor.moveToNext());
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in getAll(): " + e.getMessage());
         } finally {
             if (cursor != null) cursor.close();
         }

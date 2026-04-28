@@ -219,13 +219,33 @@ public class SanPhamActivity extends AppCompatActivity {
         spStatus.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, statusList));
 
-        if (product != null) {
-            edtName.setText(product.getName());
+        if (product != null) {            edtName.setText(product.getName());
             edtPrice.setText(String.valueOf(product.getPrice()));
             edtQuantity.setText(String.valueOf(product.getQuantity()));
             edtDescription.setText(product.getDescription());
             edtAgeFrom.setText(String.valueOf(product.getAgeFrom()));
             edtAgeTo.setText(String.valueOf(product.getAgeTo()));
+
+            for (int i = 0; i < imageNames.length; i++) {
+                if (imageNames[i].equals(product.getImage())) {
+                    spinnerImage.setSelection(i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < statusList.length; i++) {
+                if (statusList[i].equals(product.getStatus())) {
+                    spStatus.setSelection(i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getId() == product.getCategoryId()) {
+                    spCategory.setSelection(i);
+                    break;
+                }
+            }
         }
         btnClose.setOnClickListener(v -> dialog.dismiss());
 

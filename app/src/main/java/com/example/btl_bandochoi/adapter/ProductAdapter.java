@@ -78,13 +78,27 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.tvQuantity.setText("SL: " + p.getQuantity());
 
         holder.txtDescription.setText("Mô tả: " + p.getDescription());
-        holder.txtAge.setText("Độ tuổi: " + p.getAgeFrom() + " - " + p.getAgeTo());
+        if (p.getAgeFrom() == 0 && p.getAgeTo() == 0) {
+            holder.txtAge.setText("Độ tuổi: Chưa cập nhật");
+        } else {
+            holder.txtAge.setText("Độ tuổi: " + p.getAgeFrom() + " - " + p.getAgeTo());
+        }
         holder.txtStatus.setText("Trạng thái: " + p.getStatus());
 
-        int resId = context.getResources().getIdentifier(
-                p.getImage(), "drawable", context.getPackageName()
-        );
-        holder.imgProduct.setImageResource(resId != 0 ? resId : R.drawable.car);
+        String imgName = p.getImage();
+        int resId = 0;
+
+        if (imgName != null && !imgName.trim().isEmpty()) {
+            resId = context.getResources().getIdentifier(
+                    imgName, "drawable", context.getPackageName()
+            );
+        }
+
+        if (resId == 0) {
+            resId = R.drawable.car;
+        }
+
+        holder.imgProduct.setImageResource(resId);
 
         holder.layoutExtra.setVisibility(p.isExpanded() ? View.VISIBLE : View.GONE);
 

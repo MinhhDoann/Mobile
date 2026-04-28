@@ -76,20 +76,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE SET NULL" +
                 ")");
 
-        db.execSQL("CREATE TABLE StockHistory (" +
+        db.execSQL("CREATE TABLE TransactionHistory (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "product_id INTEGER," +
-                "type TEXT CHECK(type IN ('import','export','adjust'))," +
-                "quantity INTEGER," +
+                "customer_id INTEGER," +
+                "invoice_id INTEGER," +
                 "date TEXT DEFAULT (datetime('now','localtime'))," +
-                "FOREIGN KEY(product_id) REFERENCES Product(id) ON DELETE CASCADE" +
+                "FOREIGN KEY(customer_id) REFERENCES Customer(id) ON DELETE CASCADE," +
+                "FOREIGN KEY(invoice_id) REFERENCES Invoice(id) ON DELETE CASCADE" +
                 ")");
-
         seedData(db);
     }
 
     private void seedData(SQLiteDatabase db) {
-        // Thêm Danh mục
         ContentValues cat1 = new ContentValues();
         cat1.put("name", "Lego");
         cat1.put("description", "Đồ chơi lắp ráp trí tuệ");
@@ -100,11 +98,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cat2.put("description", "Đồ chơi dành cho bé gái");
         long catId2 = db.insert("Category", null, cat2);
 
-        // Thêm Sản phẩm
         ContentValues p1 = new ContentValues();
         p1.put("name", "Lego Phi Thuyền");
         p1.put("price", 550000);
-        p1.put("quantity", 2); // Để test chức năng sắp hết hàng
+        p1.put("quantity", 2);
         p1.put("category_id", catId1);
         db.insert("Product", null, p1);
 
@@ -118,11 +115,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues p3 = new ContentValues();
         p3.put("name", "Lego Xe Đua");
         p3.put("price", 450000);
-        p3.put("quantity", 1); // Để test chức năng sắp hết hàng
+        p3.put("quantity", 1);
         p3.put("category_id", catId1);
         db.insert("Product", null, p3);
 
-        // Thêm Khách hàng
         ContentValues c1 = new ContentValues();
         c1.put("name", "Nguyễn Văn An");
         c1.put("phone", "0987654321");

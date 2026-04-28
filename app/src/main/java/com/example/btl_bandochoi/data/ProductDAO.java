@@ -25,10 +25,9 @@ public class ProductDAO {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "SELECT * FROM Product " +
-                        "WHERE quantity > 0 AND quantity <= 10 " +
-                        "ORDER BY quantity ASC LIMIT ?",
-                new String[]{String.valueOf(limit)}
+                "SELECT * FROM Product WHERE quantity > 0 AND quantity <= 10 " +
+                        "ORDER BY quantity ASC LIMIT " + limit,
+                null
         );
 
         if (cursor.moveToFirst()) {
@@ -37,7 +36,25 @@ public class ProductDAO {
 
                 p.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
                 p.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                p.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
+                p.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow("price")));
                 p.setQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("quantity")));
+                p.setAgeFrom(cursor.getInt(cursor.getColumnIndexOrThrow("age_from")));
+                p.setAgeTo(cursor.getInt(cursor.getColumnIndexOrThrow("age_to")));
+
+                int statusIdx = cursor.getColumnIndex("status");
+                if (statusIdx != -1 && !cursor.isNull(statusIdx)) {
+                    p.setStatus(cursor.getString(statusIdx));
+                } else {
+                    p.setStatus("active");
+                }
+
+                int imageIdx = cursor.getColumnIndex("image");
+                if (imageIdx != -1 && !cursor.isNull(imageIdx)) {
+                    p.setImage(cursor.getString(imageIdx));
+                } else {
+                    p.setImage("car");
+                }
 
                 list.add(p);
 
@@ -131,8 +148,18 @@ public class ProductDAO {
                     p.setQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("quantity")));
                     p.setAgeFrom(cursor.getInt(cursor.getColumnIndexOrThrow("age_from")));
                     p.setAgeTo(cursor.getInt(cursor.getColumnIndexOrThrow("age_to")));
-                    p.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-                    p.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+                    int statusIdx = cursor.getColumnIndex("status");
+                    if (statusIdx != -1) {
+                        p.setStatus(cursor.getString(statusIdx));
+                    } else {
+                        p.setStatus("active");
+                    }
+                    int imgIdx = cursor.getColumnIndex("image");
+                    if (imgIdx != -1 && !cursor.isNull(imgIdx)) {
+                        p.setImage(cursor.getString(imgIdx));
+                    } else {
+                        p.setImage("car");
+                    }
                     p.setCategoryId(cursor.getInt(cursor.getColumnIndexOrThrow("category_id")));
 
                     list.add(p);
