@@ -3,6 +3,8 @@ package com.example.btl_bandochoi;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,11 +30,13 @@ import java.util.List;
 public class InvoiceActivity extends AppCompatActivity {
 
     private RecyclerView recyclerOrders;
-    private ImageView btnBack, btnSearch;
+    private ImageView btnBack;
     private Button btnAddOrder;
     private InvoiceDAO invoiceDAO;
+    private EditText edtSearch;
+    private ImageView btnSearch;
     private CustomerDAO customerDAO;
-    private List<Invoice> invoiceList;
+    private List<Invoice> fullList; // Danh sách gốc để lọc
     private InvoiceAdapter invoiceAdapter;
 
     @Override
@@ -54,6 +58,7 @@ public class InvoiceActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnSearch = findViewById(R.id.btnSearch);
         btnAddOrder = findViewById(R.id.btnAddOrder);
+        edtSearch = findViewById(R.id.edtSearch); // Ánh xạ edtSearch
     }
 
     private void setupRecyclerView() {
@@ -61,9 +66,13 @@ public class InvoiceActivity extends AppCompatActivity {
     }
 
     private void loadOrders() {
-        invoiceList = invoiceDAO.getAllInvoices();
-        if (invoiceList != null) {
-            invoiceAdapter = new InvoiceAdapter(this, invoiceList, invoice -> {
+        fullList = invoiceDAO.getAllInvoices();
+        updateAdapter(fullList);
+    }
+
+    private void updateAdapter(List<Invoice> list) {
+        if (list != null) {
+            invoiceAdapter = new InvoiceAdapter(this, list, invoice -> {
                 Intent intent = new Intent(InvoiceActivity.this, InvoiceDetailActivity.class);
                 intent.putExtra("invoice_id", invoice.getId());
                 startActivity(intent);
@@ -80,6 +89,49 @@ public class InvoiceActivity extends AppCompatActivity {
         if (btnAddOrder != null) {
             btnAddOrder.setOnClickListener(v -> showAddInvoiceDialog());
         }
+
+        // Sự kiện nút tìm kiếm (ẩn/hiện thanh tìm kiếm)
+        if (btnSearch != null) {
+            btnSearch.setOnClickListener(v -> {
+                if (edtSearch.getVisibility() == View.GONE) {
+                    edtSearch.setVisibility(View.VISIBLE);
+                    edtSearch.requestFocus();
+                } else {
+                    edtSearch.setVisibility(View.GONE);
+                    edtSearch.setText("");
+                    loadOrders(); // Reset lại danh sách khi đóng tìm kiếm
+                }
+            });
+        }
+
+        // Sự kiện lọc dữ liệu khi gõ vào ô tìm kiếm
+        if (edtSearch != null) {
+            edtSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    filter(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        }
+    }
+
+    private void filter(String text) {
+        if (fullList == null) return;
+        List<Invoice> filteredList = new ArrayList<>();
+        for (Invoice item : fullList) {
+            // Lọc theo mã hóa đơn
+            if (item.getInvoiceCode() != null && 
+                item.getInvoiceCode().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        updateAdapter(filteredList);
     }
 
     private void showAddInvoiceDialog() {
@@ -93,7 +145,6 @@ public class InvoiceActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSave);
         Button btnCancel = view.findViewById(R.id.btnCancel);
 
-        // Load danh sách khách hàng vào Spinner
         List<Customer> customers = customerDAO.getAll();
         List<String> customerNames = new ArrayList<>();
         for (Customer c : customers) {
@@ -130,11 +181,10 @@ public class InvoiceActivity extends AppCompatActivity {
             newInvoice.setStatus("Pending");
             newInvoice.setTotal(0.0);
 
-            // Sửa lỗi: Gọi đúng phương thức insertInvoice thay vì insert
             long result = invoiceDAO.insertInvoice(newInvoice);
             if (result > 0) {
                 Toast.makeText(this, "Thêm đơn hàng thành công", Toast.LENGTH_SHORT).show();
-                loadOrders(); // Tải lại danh sách
+                loadOrders();
                 dialog.dismiss();
             } else {
                 Toast.makeText(this, "Thêm đơn hàng thất bại", Toast.LENGTH_SHORT).show();
@@ -142,7 +192,6 @@ public class InvoiceActivity extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-
         dialog.show();
     }
 

@@ -206,7 +206,7 @@ public class SanPhamActivity extends AppCompatActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
         ImageView btnClose = dialog.findViewById(R.id.btnClose);
 
-        String[] imageNames = {"car", "doll", "robot", "lego", "go"};
+        String[] imageNames = {"car", "doll", "robot", "lego", "go",};
         spinnerImage.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, imageNames));
 
