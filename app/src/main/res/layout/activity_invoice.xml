@@ -38,6 +38,16 @@
             android:src="@android:drawable/ic_menu_search" />
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@android:drawable/edit_text"
+        android:hint="Nhập mã hóa đơn cần tìm..."
+        android:padding="12dp"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerOrders"
         android:layout_width="match_parent"
