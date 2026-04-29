@@ -121,6 +121,13 @@ public class ProductDAO {
         return rowsAffected;
     }
 
+    public void updateStock(int productId, int quantityChange) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("UPDATE Product SET quantity = quantity + ? WHERE id = ?",
+                new Object[]{quantityChange, productId});
+        db.close();
+    }
+
     public int deleteProduct(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rowsDeleted = db.delete("Product", "id=?",

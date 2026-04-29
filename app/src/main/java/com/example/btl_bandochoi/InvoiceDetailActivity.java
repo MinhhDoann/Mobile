@@ -85,16 +85,13 @@ public class InvoiceDetailActivity extends AppCompatActivity {
             txtAddress.setText("Địa chỉ: " + (invoice.getCustomerAddress() != null ? invoice.getCustomerAddress() : "Chưa cập nhật"));
             txtOrderDate.setText("Ngày đặt hàng: " + invoice.getDate());
             
-            // Load danh sách sản phẩm chi tiết
             List<InvoiceDetail> details = detailDAO.getDetailsByInvoiceId(invoiceId);
             
-            // Tính toán lại tổng tiền dựa trên các sản phẩm thực tế
             double total = 0;
             for (InvoiceDetail d : details) {
                 total += d.getSubTotal();
             }
             
-            // Cập nhật tổng tiền vào Database bảng Invoice nếu có thay đổi
             if (total != invoice.getTotal()) {
                 invoiceDAO.updateTotal(invoiceId, total);
             }
@@ -104,13 +101,15 @@ public class InvoiceDetailActivity extends AppCompatActivity {
             txtTotalAmount.setText(df.format(total));
 
             InvoiceDetailAdapter adapter = new InvoiceDetailAdapter(details, detail -> {
-                // Xử lý XÓA sản phẩm
                 new AlertDialog.Builder(this)
                         .setTitle("Xác nhận xóa")
-                        .setMessage("Bạn có muốn xóa sản phẩm này khỏi đơn hàng?")
+                        .setMessage("Bạn có muốn xóa sản phẩm này khỏi đơn hàng? Số lượng sẽ được hoàn trả lại kho.")
                         .setPositiveButton("Xóa", (dialog, which) -> {
+                            // Khi xóa chi tiết hóa đơn, hoàn trả lại số lượng vào kho
+                            productDAO.updateStock(detail.getProductId(), detail.getQuantity());
                             detailDAO.delete(detail.getId());
-                            loadInvoiceData(); // Tải lại để cập nhật tổng tiền
+                            loadInvoiceData();
+                            Toast.makeText(this, "Đã xóa và hoàn trả số lượng vào kho", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("Hủy", null)
                         .show();
@@ -153,7 +152,7 @@ public class InvoiceDetailActivity extends AppCompatActivity {
         List<Product> products = productDAO.getAllProducts();
         List<String> productNames = new ArrayList<>();
         for (Product p : products) {
-            productNames.add(p.getName() + " - " + df.format(p.getPrice()));
+            productNames.add(p.getName() + " (Kho: " + p.getQuantity() + ") - " + df.format(p.getPrice()));
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, productNames);
@@ -169,27 +168,41 @@ public class InvoiceDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            int quantity = Integer.parseInt(quantityStr);
+            int buyQuantity = Integer.parseInt(quantityStr);
+            if (buyQuantity <= 0) {
+                Toast.makeText(this, "Số lượng phải lớn hơn 0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Product selectedProduct = products.get(spinnerProduct.getSelectedItemPosition());
+
+            // 1. Kiểm tra số lượng tồn kho
+            if (buyQuantity > selectedProduct.getQuantity()) {
+                Toast.makeText(this, "Số lượng tồn kho không đủ! (Còn: " + selectedProduct.getQuantity() + ")", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             // Kiểm tra xem sản phẩm đã có trong đơn hàng chưa
             InvoiceDetail existingDetail = detailDAO.getDetailByInvoiceAndProduct(invoiceId, selectedProduct.getId());
             
             if (existingDetail != null) {
-                // Nếu đã có, cộng dồn số lượng
-                detailDAO.updateQuantity(existingDetail.getId(), existingDetail.getQuantity() + quantity);
+                // Nếu đã có, cộng dồn số lượng (đã check ở trên nhưng check lại cho chắc nếu cần)
+                detailDAO.updateQuantity(existingDetail.getId(), existingDetail.getQuantity() + buyQuantity);
             } else {
                 // Nếu chưa có, thêm mới
                 InvoiceDetail detail = new InvoiceDetail();
                 detail.setInvoiceId(invoiceId);
                 detail.setProductId(selectedProduct.getId());
-                detail.setQuantity(quantity);
+                detail.setQuantity(buyQuantity);
                 detail.setPrice(selectedProduct.getPrice());
                 detail.setDiscount(0);
                 detailDAO.insert(detail);
             }
 
-            Toast.makeText(this, "Đã thêm sản phẩm vào đơn hàng", Toast.LENGTH_SHORT).show();
+            // 2. Trừ số lượng trong kho sản phẩm
+            productDAO.updateStock(selectedProduct.getId(), -buyQuantity);
+
+            Toast.makeText(this, "Đã thêm sản phẩm và cập nhật kho", Toast.LENGTH_SHORT).show();
             loadInvoiceData(); // Tải lại giao diện và cập nhật tổng tiền
             dialog.dismiss();
         });
